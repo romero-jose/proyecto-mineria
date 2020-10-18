@@ -48,8 +48,8 @@ La exploración de los datos se hicieron sobre la matriz de viaje del año 2019 
 ## Definir directorio a trabajar:
 ```{r eval=F}
 # Asignamos nuestro "working directory" (set w. d.) como el directorio ~/RDATA
-#setwd(choose.dir())
-setwd("D:/UdeChile/12Semestre/Intro Mineria/Proyecto/Datos2019")
+setwd(choose.dir())
+#setwd("D:/UdeChile/12Semestre/Intro Mineria/Proyecto/Datos2019")
 ```
 Otra opcion es ir a "Session"->"Set Working Directory"->"Chooose Directory" para elegir el directorio.
 
@@ -380,15 +380,22 @@ personas_encuesta$Estudios <- data.frame(personas_encuesta)$Estudios %lc+% data.
 ## Graficos de datset matriz_2019
 
 Boxplot para matriz 2019, utilizando hora y viaje promedio:
+
 ```{r}
-#plot(matriz_2019$MediaHora, matriz_2019$ViajeLaboralPromedio, ylim=c(0,2000), main="BoxPlot Matriz de Viaje", xlab="Hora", ylab="N° de viajes")
-#axis.POSIXct(1, at=matriz_2019$MediaHora, labels = format(matriz_2019$MediaHora, "%h:%m"))
+library(dplyr)
 library(ggplot2)
 matriz_2019 %>%
-  ggplot(aes(x = matriz_2019$MediaHora, y = matriz_2019$ViajeLaboralPromedio, )) +
-    geom_col() + 
-      scale_x_time() +
-      labs(y="Número de viajes", x="Hora")
+  select(MediaHora, ViajeLaboralPromedio) %>%
+  mutate(Hora = as.character(MediaHora)) %>%
+  group_by(Hora) %>%
+  summarise(total = round(sum(ViajeLaboralPromedio))) %>%
+  arrange(Hora)%>% 
+  ggplot(aes(x=Hora, y=total, fill=Hora))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=2.5, angle = 90)+
+  labs(x='', title = 'Numero de viajes promedio por hora', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=6),
+        legend.position = 'none', axis.text.x = element_text(angle = 90, size = 8))
 ```
 No se podrá obtener mucha información de este grafico.
 
