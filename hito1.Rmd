@@ -84,9 +84,10 @@ En ese orden. Al último dataset se le aplico un sample anterior a cargarlo a rs
 ```{r message=FALSE}
 library(readr)
 loc <- locale("es", decimal_mark = ',', encoding = 'latin1')
+loc2 <- locale("en", decimal_mark = '.', encoding='latin1')
 matriz_2019 <- read_csv2('datos/2019Agosto_05_09.MatrizODviajes_comunas_mediahora.csv', locale = loc)
 subidas_2019 <- read_csv2('datos/2019Agosto_05_09.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
-viajeslaboral_2020 <- read_csv2('datos/viajes2020_03_laboral_100k.csv', locale = loc, na = c('-', 'NA'), guess_max = 10000)
+viajeslaboral_2020 <- read_csv2('datos/viajes2020_03_laboral_100k.csv', locale = loc2, na = c('-', 'NA'), guess_max = 10000)
 viajes_encuesta <- read_csv2('datos/viajes.csv', locale = loc)
 hogares_encuesta <- read_csv2('datos/Hogares.csv', locale = loc)
 personas_encuesta <- read_csv2('datos/personas.csv', locale = loc)
@@ -559,6 +560,27 @@ personas_encuesta %>%   # Año 2010 y solo comunas
         legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
   coord_flip()+
   scale_y_continuous(breaks = seq(0,32000,by=5000))
+```
+```{r}
+viajeslaboral_2020 %>%
+  select(tviaje_seg) %>%
+  filter(!is.na(tviaje_seg)) %>%
+  ggplot(aes(x=tviaje_seg/60.)) +
+  geom_histogram(binwidth = 10) +
+  labs(x='Tiempo de viaje [min]', title = 'Distribución del tiempo de viaje', y="Frecuencia")
+```
+```{r}
+viajeslaboral_2020 %>%
+  filter(!is.na(tviaje_seg)) %>%
+  filter(!is.na(comunasubida)) %>%
+  group_by(comunasubida) %>%
+  summarise(median_time = median(tviaje_seg/60.)) %>%
+  ggplot(aes(x=reorder(comunasubida, median_time), y=median_time, fill=comunasubida)) +
+  geom_bar(stat='identity') +
+  labs(y='Tiempo de viaje [min]', title = 'Tiempo de viaje mediano por comuna de origen', x="") +
+  theme(axis.text.y = element_text(size=6),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
+  coord_flip()
 ```
 
 # Preguntas y Problemas
