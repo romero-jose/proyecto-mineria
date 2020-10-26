@@ -26,7 +26,7 @@ Integrantes: Joaquin Cubelli de Leon, Luckas Diaz Renjifo, Ricardo Lopez Diaz, J
 
 Para este trabajo se utilizaran datos realacionados con el sistema de transporte público metropolitano, en particular las "Matrices de Viajes" relacionado al origen-destino, subida y bajada, recolectadas a partir de software ADATRAP. Esta información fue obtenida de las bases de datos de la tarjeta bip! y de los GPS de los buses.
 
-En estas "Matrices" se tienen 3 tipos de datasets desde el año 2014 al 2019:
+En estas "Matrices" se tienen 3 tipos de datasets desde el año 2014 al 2019, mientras que para los años 2011 a 2013 se tienen algunos de estos 3 tipos:
 
 -Tabla de viajes: Cada fila de la base de datos, corresponde a un viaje realizado por una persona, en donde es estimado el lugar de subida y bajada de cada etapa de viajes. Se incluyen archivos que detallan los campos y estructuras de las tablas.
 -Tabla de etapas: Es un extracto de la Tabla de Viajes, donde cada fila de la base de datos corresponde a una etapa del viaje realizado por una persona, en donde es estimado el lugar de subida y bajada de la etapa. Se incluyen archivos que detallan los campos y estructuras de las tablas.
@@ -65,28 +65,58 @@ Otra opcion es ir a "Session"->"Set Working Directory"->"Chooose Directory" para
 
 ## Cargar los datos de forma local:
 
-Cargar los archivos:
+Para cargar los datos de forma local, se debe clonar el proyecto desde el repositorio de github, donde se tiene la carpeta 'datos' que contiene todos los archivos que se cargar.
 
-- "2019Agosto_05_09.MatrizODviajes_comunas_mediahora.csv"
-- "2019Agosto_05_09.SubidasPorParadaMediaHora.csv"
-- "viajes2020_03_laboral_100k.csv"
-- "viajes.csv"
-- "Hogares.csv"
-- "personas.csv"
-- "Comuna.csv"
-- "Proposito.csv"
-- "TipoDia.csv"
-- "Sexo.csv"
-- "Adulto Mayor.csv"
-- "Estudios.csv"
-
-En ese orden. Al último dataset se le aplico un sample anterior a cargarlo a rstudio, ya que consistia en un archivo de caso 10gb de información.
+Al dataset 'viajeslaboral_2020' se le aplico un sample anterior a cargarlo a rstudio, ya que consistia en un archivo de caso 10gb de información.
 ```{r message=FALSE}
 library(readr)
+
 loc <- locale("es", decimal_mark = ',', encoding = 'latin1')
-matriz_2019 <- read_csv2('datos/2019Agosto_05_09.MatrizODviajes_comunas_mediahora.csv', locale = loc)
-subidas_2019 <- read_csv2('datos/2019Agosto_05_09.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
+
+# 2020
 viajeslaboral_2020 <- read_csv2('datos/viajes2020_03_laboral_100k.csv', locale = loc, na = c('-', 'NA'), guess_max = 10000)
+
+# 2019
+matriz_2019.08 <- read_csv2('datos/2019Agosto_05_09.MatrizODviajes_comunas_mediahora.csv', locale = loc)
+subidas_2019.08 <- read_csv2('datos/2019Agosto_05_09.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
+matriz_2019.04 <- read_csv2('datos/tablasWeb2019Abril_01_05.MatrizODComunasMediaHora.csv', locale = loc)
+subidas_2019.04 <- read_csv2('datos/tablasWeb2019Abril_01_05.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
+
+# 2018
+matriz_2018.10 <- read_csv2('datos/tablasWeb2018Oct_08_12.MatrizODComunasMediaHora.csv', locale = loc)
+subidas_2018.10 <- read_csv2('datos/tablasWeb2018Oct_08_12.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
+matriz_2018.04 <- read_csv2('datos/2018abril_09_13.MatrizODviajes_comunas_mediahora.csv', locale = loc)
+subidas_2018.04 <- read_csv2('datos/2018abril_09_13.Subidas_paradero_mediahora.csv', locale = loc, na = c('-', 'NA'))
+
+# 2017
+matriz_2017.04 <- read_csv2('datos/2017abril_(3.4.6.7.12).MatrizODviajes_comunas_mediahora.csv', locale = loc)
+subidas_2017.04 <- read_csv2('datos/2017abril_(3.4.6.7.12).Subidas_paradero_mediahora.csv', locale = loc, na = c('-', 'NA'))
+
+# 2016
+matriz_2016.05 <- read_csv2('datos/2016mayo_23_27.MatrizODviajes_comunas_mediahora.csv', locale = loc)
+subidas_2016.05 <- read_csv2('datos/2016mayo_23_27.Subidas_paradero_mediahora.csv', locale = loc, na = c('-', 'NA'))
+
+# 2015
+matriz_2015.04 <- read_csv2('datos/2015abril_20_24.MatrizODviajes_comunas_mediahora.csv', locale = loc)
+subidas_2015.04 <- read_csv2('datos/2015abril_20_24.Subidas_paradero_mediahora.csv', locale = loc, na = c('-', 'NA'))
+
+# 2014
+matriz_2014.05 <- read_csv2('datos/2014mayo_26_30.MatrizODviajes_comunas_mediahora.csv', locale = loc)
+subidas_2014.05 <- read_csv2('datos/2014mayo_26_30.Subidas_paradero_mediahora.csv', locale = loc, na = c('-', 'NA'))
+
+# 2013
+matriz_2013.04 <- read_csv2('datos/2013abril_15_19.MatrizODviajes_comunas_mediahora.csv', locale = loc)
+subidas_2013.04 <- read_csv2('datos/2013abril_15_19.Subidas_paradero_mediahora.csv', locale = loc, na = c('-', 'NA'))
+
+# 2012
+matriz_2012.04 <- read_csv2('datos/2012abril_16_20.MatrizODviajes_comunas_mediahora.csv', locale = loc)
+subidas_2012.04 <- read_csv2('datos/2012abril_16_20.Subidas_paradero_mediahora.csv', locale = loc, na = c('-', 'NA'))
+
+# 2011
+matriz_2011.04 <- read_csv2('datos/2011abril_11_15.MatrizODviajes_comunas_mediahora.csv', locale = loc)
+
+
+# Encuesta
 viajes_encuesta <- read_csv2('datos/viajes.csv', locale = loc)
 hogares_encuesta <- read_csv2('datos/Hogares.csv', locale = loc)
 personas_encuesta <- read_csv2('datos/personas.csv', locale = loc)
@@ -98,76 +128,81 @@ adultomayor_encuesta <- read_csv2('datos/AdultoMayor.csv', locale = loc)
 estudios_encuesta <- read_csv2('datos/Estudios.csv', locale = loc)
 ```
 
-## Atributos del dataset matriz_2019:
+## Atributos del dataset matriz_2019.08:
 
 ```{r}
 library(dplyr)
 
 # select character columns 'char1', 'char2', etc. to factor:
-matriz_2019 <- mutate_at(matriz_2019, vars('ComunaSubida', 'ComunaBajada'), as.factor)
+matriz_2019.08 <- mutate_at(matriz_2019.08, vars('ComunaSubida', 'ComunaBajada'), as.factor)
 
-str(matriz_2019)
+str(matriz_2019.08)
 
-summary(matriz_2019)
+summary(matriz_2019.08)
 
-head(matriz_2019,10)
+head(matriz_2019.08,10)
 ```
 
 Datos NA:
 ```{r}
-sapply(matriz_2019, function(x) sum(is.na(x)))
+sapply(matriz_2019.08, function(x) sum(is.na(x)))
 ```
 No se encontraron datos NA.
 
 Datos 0:
 ```{r}
-sapply(matriz_2019, function(x) sum(x==0))
+sapply(matriz_2019.08, function(x) sum(x==0))
 ```
 
 Con lo anterior se aprecia que las columnas "Viajes4Etapas" y "Viajes5oMasEtapas" poseen gran cantidad de valores 0, teniendo en cuenta que el dataset consta de 44660 observaciones. Entonces estas columnas no se contemplaran. Luego hay que decidir sobre el resto de valores 0, ya que estos pueden ser reemplazados por un promedio de la columna o de alguna otra forma.
 
 ```{r}
 # Se eliminan las columnas "Viajes4Etapas" y "Viajes5oMasEtapas"
-matriz_2019$Viajes4Etapas <- NULL
-matriz_2019$Viajes5oMasEtapas <- NULL
+matriz_2019.08$Viajes4Etapas <- NULL
+matriz_2019.08$Viajes5oMasEtapas <- NULL
 ```
 
 Datos Negativos:
 ```{r}
 # se aplica solo a los datos numericos
-sapply(matriz_2019[,4:10], function(x) sum(x<0))
+sapply(matriz_2019.08[,4:10], function(x) sum(x<0))
 ```
 
 Lo anterior evidencia que no hay datos negativos que puedan afectar en algun analisis.
 
-## Atributos del dataset subidas_2019:
+## Atributos del dataset subidas_2019.08:
 
 ```{r}
-subidas_2019 <- mutate_at(subidas_2019, vars("ParadaSubida"), as.factor)
+subidas_2019.08 <- mutate_at(subidas_2019.08, vars("ParadaSubida"), as.factor)
 
-str(subidas_2019)
+str(subidas_2019.08)
 
-summary(subidas_2019)
+summary(subidas_2019.08)
 
-head(subidas_2019,10)
+head(subidas_2019.08,10)
 ```
 
 Datos NA:
 ```{r}
-sapply(subidas_2019, function(x) sum(is.na(x)))
+sapply(subidas_2019.08, function(x) sum(is.na(x)))
 ```
 Hay datos NA para las paradas de subida, pero son pocas filas, por lo tanto las podemos descartar.
+
+```{r}
+subidas_2019.08 <- na.omit(subidas_2019.08)
+sapply(subidas_2019.08, function(x) sum(is.na(x)))
+```
 
 
 Datos igual a 0:
 ```{r}
-sapply(subidas_2019, function(x) sum(x==0))
+sapply(subidas_2019.08, function(x) sum(x==0))
 ```
-No se encontraron datos igual a 0.
+Se encontraron pocos datos igual a 0, con relacion a la cantidad de datos de la tabla. Estos valores no son ruido, ya que representan las 12 de la noche o mas bien las 00:00 horas.
 
 Datos negativos:
 ```{r}
-sapply(subidas_2019["SubidasPromedio"], function(x) sum(x<0))
+sapply(subidas_2019.08["SubidasPromedio"], function(x) sum(x<0))
 ```
 No se encontraron datos negativos.
 
@@ -182,13 +217,15 @@ Datos NA:
 aux <- sapply(viajeslaboral_2020, function(x) sum(is.na(x)))
 (aux[order(aux, decreasing = TRUE)])[0:10]
 ```
+Aqui se encuentran gran cantidad de datos con valores NA. A continuacion se procede a eliminar ciertas columnas.
+
 ```{r}
 #Se eliminan columnas NA
 viajeslaboral_2020<- viajeslaboral_2020[, colSums((is.na(viajeslaboral_2020))) < 90000]
 aux <- sapply(viajeslaboral_2020, function(x) sum(is.na(x)))
 (aux[order(aux, decreasing = TRUE)])[0:10]
 ```
-Se eliminaron 52 columnas que contenian más de 90000 datos NA.
+Se eliminaron 52 columnas que contenian más de 90000 datos NA. Pero siguen existiendo gran numero de datos NA en numerosas columnas. Si se reduce el umbral definido en el comando anterior, se reducen considerablemente el numero de columnas en la tabla.
 
 ```{r}
 #Se eliminan filas con solo NA
@@ -232,10 +269,14 @@ Datos NA:
 aux <- sapply(viajes_encuesta, function(x) sum(is.na(x)))
 (aux[order(aux, decreasing = TRUE)])[0:10]
 ```
-Se encuentran gran cantidad de datos NA en 4 columnas. Teniendo en cuenta la cantidad total de datos en este dataset, la columna "ActividadDestino" se eliminará
+Se encuentran gran cantidad de datos NA en 4 columnas. Teniendo en cuenta la cantidad total de datos en este dataset, las columnas "FactorFindesemanaEstival", "FactorDomingoNormal", "FactorSabadoNormal", "FactorLaboralEstival" y "ActividadDestino" se eliminaran
 
 ```{r}
 # Se elimina la columna "ActividadDestino"
+viajes_encuesta$FactorFindesemanaEstival <- NULL
+viajes_encuesta$FactorDomingoNormal <- NULL
+viajes_encuesta$FactorSabadoNormal <- NULL
+viajes_encuesta$FactorLaboralEstival <- NULL
 viajes_encuesta$ActividadDestino <- NULL
 ```
 
@@ -333,13 +374,23 @@ Datos NA:
 aux <- sapply(personas_encuesta, function(x) sum(is.na(x)))
 (aux[order(aux, decreasing = TRUE)])[0:15]
 ```
-En varias columnas se encuentran numerosos datos NA. Se eliminarán los primeras 3 columnas con mayor numero de NA, ya que las otras podrian entregar información interesante.
+En varias columnas se encuentran numerosos datos NA. Se eliminarán los primeras 12 columnas con mayor numero de NA, ya que las otras podrian entregar información interesante.
 
 ```{r}
 # Se eliminan las columnas con muchos datos NA
 personas_encuesta$TarjetaBip <- NULL
+personas_encuesta$Factor_FindesemanaEstival <- NULL
+personas_encuesta$Factor_DomingoNormal <- NULL
+personas_encuesta$Factor_SábadoNormal <- NULL
+personas_encuesta$Factor_LaboralEstival <- NULL
 personas_encuesta$MedioViajeRestricion <- NULL
+personas_encuesta$DirEstudiosCoordX <- NULL
+personas_encuesta$DirEstudiosCoordY<- NULL
 personas_encuesta$NoViaja <- NULL
+personas_encuesta$DondeEstudia <- NULL
+personas_encuesta$DirActividadCoordX <- NULL
+personas_encuesta$DirActividadCoordY <- NULL
+
 ```
 
 Datos igual a 0:
@@ -359,7 +410,7 @@ Datos negativos:
 aux <- sapply(personas_encuesta, function(x) sum(x<0))
 (aux[order(aux, decreasing = TRUE)])[0:15]
 ```
-En varias columnas se encuentran numeros negativos. Dado la naturaleza de estos datos se aceptan que sean negativos.
+No se encontraron datos negativos.
 
 Reemplazar ID de sexo por sus nombres
 ```{r}
@@ -377,14 +428,14 @@ personas_encuesta$Estudios <- data.frame(personas_encuesta)$Estudios %lc+% data.
 ```
 
 
-## Graficos de datset matriz_2019
+## Graficos de datset matriz_2019.08
 
-Boxplot para matriz 2019, utilizando hora y viaje promedio:
+Boxplot para matriz 2019.08, utilizando hora y viaje promedio:
 
 ```{r}
 library(dplyr)
 library(ggplot2)
-matriz_2019 %>%
+matriz_2019.08 %>%
   select(MediaHora, ViajeLaboralPromedio) %>%
   mutate(Hora = as.character(MediaHora)) %>%
   group_by(Hora) %>%
@@ -403,7 +454,7 @@ Grafico viajes promedio por hora:
 ```{r}
 library(dplyr)
 library(ggplot2)
-matriz_2019 %>%
+matriz_2019.08 %>%
   select(MediaHora, ViajeLaboralPromedio) %>%
   mutate(Hora = as.character(MediaHora)) %>%
   group_by(Hora) %>%
@@ -420,7 +471,7 @@ matriz_2019 %>%
 
 
 ```{r}
-matriz_2019 %>%   # Año 2010 y solo comunas
+matriz_2019.08 %>%   # Año 2010 y solo comunas
   group_by(ComunaSubida) %>%                       # Agrupamos por "muerto", "leve", etc
   summarise(total = round(sum(ViajeLaboralPromedio))) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
   arrange(-total)%>% 
@@ -437,7 +488,7 @@ matriz_2019 %>%   # Año 2010 y solo comunas
 
 
 ```{r}
-matriz_2019 %>%   # Año 2010 y solo comunas
+matriz_2019.08 %>%   # Año 2010 y solo comunas
   group_by(ComunaBajada) %>%                       # Agrupamos por "muerto", "leve", etc
   summarise(total = round(sum(ViajeLaboralPromedio))) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
   arrange(-total)%>% 
@@ -452,7 +503,7 @@ matriz_2019 %>%   # Año 2010 y solo comunas
 ```
 
 ```{r}
-matriz_2019 %>%   # Año 2010 y solo comunas
+matriz_2019.08 %>%   # Año 2010 y solo comunas
   filter(ComunaSubida=="SANTIAGO")%>%
   group_by(ComunaBajada) %>%                       # Agrupamos por "muerto", "leve", etc
   summarise(total = round(sum(ViajeLaboralPromedio))) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
@@ -468,7 +519,7 @@ matriz_2019 %>%   # Año 2010 y solo comunas
 ```
 
 ```{r}
-matriz_2019 %>%   # Año 2010 y solo comunas
+matriz_2019.08 %>%   # Año 2010 y solo comunas
   filter(ComunaSubida=="PUENTE ALTO")%>%
   group_by(ComunaBajada) %>%                       # Agrupamos por "muerto", "leve", etc
   summarise(total = round(sum(ViajeLaboralPromedio))) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
