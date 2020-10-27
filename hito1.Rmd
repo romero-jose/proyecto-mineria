@@ -143,13 +143,13 @@ summary(matriz_2019.08)
 head(matriz_2019.08,10)
 ```
 
-Datos NA:
+**Datos NA**:
 ```{r}
 sapply(matriz_2019.08, function(x) sum(is.na(x)))
 ```
 No se encontraron datos NA.
 
-Datos 0:
+**Datos 0**:
 ```{r}
 sapply(matriz_2019.08, function(x) sum(x==0))
 ```
@@ -162,7 +162,7 @@ matriz_2019.08$Viajes4Etapas <- NULL
 matriz_2019.08$Viajes5oMasEtapas <- NULL
 ```
 
-Datos Negativos:
+**Datos Negativos**:
 ```{r}
 # se aplica solo a los datos numericos
 sapply(matriz_2019.08[,4:10], function(x) sum(x<0))
@@ -182,7 +182,7 @@ summary(subidas_2019.08)
 head(subidas_2019.08,10)
 ```
 
-Datos NA:
+**Datos NA**:
 ```{r}
 sapply(subidas_2019.08, function(x) sum(is.na(x)))
 ```
@@ -194,13 +194,13 @@ sapply(subidas_2019.08, function(x) sum(is.na(x)))
 ```
 
 
-Datos igual a 0:
+**Datos igual a 0**:
 ```{r}
 sapply(subidas_2019.08, function(x) sum(x==0))
 ```
 Se encontraron pocos datos igual a 0, con relacion a la cantidad de datos de la tabla. Estos valores no son ruido, ya que representan las 12 de la noche o mas bien las 00:00 horas.
 
-Datos negativos:
+**Datos negativos**:
 ```{r}
 sapply(subidas_2019.08["SubidasPromedio"], function(x) sum(x<0))
 ```
@@ -212,7 +212,7 @@ str(viajeslaboral_2020)
 head(viajeslaboral_2020)
 ```
 
-Datos NA:
+**Datos NA**:
 ```{r}
 aux <- sapply(viajeslaboral_2020, function(x) sum(is.na(x)))
 (aux[order(aux, decreasing = TRUE)])[0:10]
@@ -233,7 +233,7 @@ viajeslaboral_2020 <- viajeslaboral_2020[rowSums(is.na(viajeslaboral_2020)) != n
 ```
 Se eliminaron 2 filas de datos NA
 
-Datos iguales a 0:
+**Datos iguales a 0**:
 ```{r}
 library(tidyr)
 library(tibble)
@@ -248,7 +248,7 @@ viajeslaboral_2020 %>%
 Luego de eliminar los datos NA, se obtuvo los resultados previos.
 
 
-Datos negativos:
+**Datos negativos**:
 ```{r}
 viajeslaboral_2020 %>%
   select(everything()) %>%
@@ -264,12 +264,12 @@ str(viajes_encuesta)
 head(viajes_encuesta)
 ```
 
-Datos NA:
+**Datos NA**:
 ```{r}
 aux <- sapply(viajes_encuesta, function(x) sum(is.na(x)))
 (aux[order(aux, decreasing = TRUE)])[0:10]
 ```
-Se encuentran gran cantidad de datos NA en 4 columnas. Teniendo en cuenta la cantidad total de datos en este dataset, las columnas "FactorFindesemanaEstival", "FactorDomingoNormal", "FactorSabadoNormal", "FactorLaboralEstival" y "ActividadDestino" se eliminaran
+Se encuentran gran cantidad de datos NA en 5 columnas. Teniendo en cuenta la cantidad total de datos en este dataset, las columnas "FactorFindesemanaEstival", "FactorDomingoNormal", "FactorSabadoNormal", "FactorLaboralEstival" y "ActividadDestino" se eliminaran
 
 ```{r}
 # Se elimina la columna "ActividadDestino"
@@ -280,7 +280,7 @@ viajes_encuesta$FactorLaboralEstival <- NULL
 viajes_encuesta$ActividadDestino <- NULL
 ```
 
-Datos igual a 0:
+**Datos igual a 0**:
 ```{r}
 viajes_encuesta %>%
   select(everything()) %>%
@@ -292,7 +292,7 @@ viajes_encuesta %>%
 ```
 Se encuentran gran cantidad de datos igual a 0 en 6 columnas. Esto no constituyen ruido ya que se relacionan con zonas geograficas.
 
-Datos negativos:
+**Datos negativos**:
 ```{r}
 viajes_encuesta %>%
   select(everything()) %>%
@@ -305,14 +305,14 @@ viajes_encuesta %>%
 ```
 No hay datos negativos
 
-Reemplazar ID de las comunas por sus nombres
+**Reemplazar ID de las comunas por sus nombres**
 ```{r}
 library(qdapTools)
 viajes_encuesta$ComunaOrigen <- data.frame(viajes_encuesta)$ComunaOrigen %lc+% data.frame(comunas_encuesta)
 viajes_encuesta$ComunaDestino <- data.frame(viajes_encuesta)$ComunaDestino %lc+% data.frame(comunas_encuesta)
 ```
 
-Reemplazar ID de los propositos de viajes por sus nombres
+**Reemplazar ID de los propositos de viajes por sus nombres**
 ```{r}
 viajes_encuesta$Proposito <- data.frame(viajes_encuesta)$Proposito %lc+% data.frame(propositos_encuesta)
 ```
@@ -323,7 +323,7 @@ str(hogares_encuesta)
 head(hogares_encuesta)
 ```
 
-Datos NA:
+**Datos NA**:
 ```{r}
 aux <- sapply(hogares_encuesta, function(x) sum(is.na(x)))
 (aux[order(aux, decreasing = TRUE)])[0:10]
@@ -335,7 +335,7 @@ Solo en una columna se encuentra un gran numero de datos NA. Esta columna se eli
 hogares_encuesta$MontoDiv <- NULL
 ```
 
-Datos igual a 0:
+**Datos igual a 0**:
 ```{r}
 aux <- sapply(hogares_encuesta, function(x) sum(x==0))
 (aux[order(aux, decreasing = TRUE)])[0:10]
@@ -351,14 +351,14 @@ hogares_encuesta$NumVeh <- NULL
 hogares_encuesta$NumBicAdulto <- NULL
 ```
 
-Datos negativos:
+**Datos negativos**:
 ```{r}
 aux <- sapply(hogares_encuesta, function(x) sum(x<0))
 (aux[order(aux, decreasing = TRUE)])[0:15]
 ```
 No se encuentran datos negativos.
 
-Reemplazar ID de los tipo de dias por sus nombres
+**Reemplazar ID de los tipo de dias por sus nombres**
 ```{r}
 hogares_encuesta$TipoDia <- data.frame(hogares_encuesta)$TipoDia %lc+% data.frame(tipodia_encuesta)
 ```
@@ -369,7 +369,7 @@ str(personas_encuesta)
 head(personas_encuesta)
 ```
 
-Datos NA:
+**Datos NA**:
 ```{r}
 aux <- sapply(personas_encuesta, function(x) sum(is.na(x)))
 (aux[order(aux, decreasing = TRUE)])[0:15]
@@ -393,7 +393,7 @@ personas_encuesta$DirActividadCoordY <- NULL
 
 ```
 
-Datos igual a 0:
+**Datos igual a 0**:
 ```{r}
 aux <- sapply(personas_encuesta, function(x) sum(x==0))
 (aux[order(aux, decreasing = TRUE)])[0:10]
@@ -405,24 +405,24 @@ En 6 columnas se encuentran varios valores iguales a 0. Aquí solo se eliminara 
 personas_encuesta$IngresoImputado <- NULL
 ```
 
-Datos negativos:
+**Datos negativos**:
 ```{r}
 aux <- sapply(personas_encuesta, function(x) sum(x<0))
 (aux[order(aux, decreasing = TRUE)])[0:15]
 ```
 No se encontraron datos negativos.
 
-Reemplazar ID de sexo por sus nombres
+**Reemplazar ID de sexo por sus nombres**
 ```{r}
 personas_encuesta$Sexo <- data.frame(personas_encuesta)$Sexo %lc+% data.frame(sexo_encuesta)
 ```
 
-Reemplazar ID de AdultoMayor por sus nombres
+**Reemplazar ID de AdultoMayor por sus nombres**
 ```{r}
 personas_encuesta$AdultoMayor <- data.frame(personas_encuesta)$AdultoMayor %lc+% data.frame(adultomayor_encuesta)
 ```
 
-Reemplazar ID de Estudios por sus nombres
+**Reemplazar ID de Estudios por sus nombres**
 ```{r}
 personas_encuesta$Estudios <- data.frame(personas_encuesta)$Estudios %lc+% data.frame(estudios_encuesta)
 ```
@@ -430,7 +430,7 @@ personas_encuesta$Estudios <- data.frame(personas_encuesta)$Estudios %lc+% data.
 
 ## Graficos de datset matriz_2019.08
 
-Boxplot para matriz 2019.08, utilizando hora y viaje promedio:
+Grafico viajes promedio por hora, ordenado:
 
 ```{r}
 library(dplyr)
@@ -631,11 +631,21 @@ viajeslaboral_2020 %>%
 En base a la motivación y la exploración de los datos surgieron las siguientes preguntas:
 
 -¿Es posible alargar/recortar el horario de algún recorrido?
+
 -Si agregamos un recorrido (bus o metro) que realice el trayecto de A a B, ¿Cuánta gente utilizaría este nuevo servicio? ¿Como este nuevo servicio descongestionaría el resto de la red?
--
+
 - Tener en consideración el factor de la gente que no paga, y que el añadir nuevos tramos ayudará a mejorar eso
 
+- Predecir cantidad de viajes de grupos poblacionales segun sexo, ingreso, estudios, residencia, entre otros.
 
-```{r}
+# Contribucion de cada integrante
 
-```
+- **Joaquin Cubelli de Leon**: Editar codigo para arreglar gráficos, redacción de la motivación y confección de presentación audio-visual.
+
+- **Luckas Diaz Renjifo**: Liempieza de datos, realizar graficos, organizar documento .Rmd y confección de presentación audio-visual.
+
+- **Ricardo Lopez Diaz**: Editar codigo para arreglar gráficos, formulación de preguntas/problemas y confección de presentación audio-visual.
+
+- **José Luis Romero**: Sampleo de los datos fuera de Rstudio, mejorar la carga de datos con los tipos correctos, solucionar errores de propagacion de los nulls, realizar graficos y confección de presentación audio-visual.
+
+- **Andres Urrutia Aliaga**: Editar codigo para arreglar gráficos, formulación de preguntas/problemas.
