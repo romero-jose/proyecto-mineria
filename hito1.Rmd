@@ -448,7 +448,7 @@ matriz_2019.08 %>%
   theme(axis.text.y = element_text(size=6),
         legend.position = 'none', axis.text.x = element_text(angle = 90, size = 8))
 ```
-No se podrá obtener mucha información de este grafico.
+
 
 Grafico viajes promedio por hora:
 ```{r}
