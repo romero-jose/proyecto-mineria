@@ -1,0 +1,1211 @@
+---
+title: "Hito2"
+author: "LuckasDiaz"
+date: "7/12/2020"
+output:
+  html_document:
+    number_sections: yes
+    theme: spacelab
+    toc: yes
+  pdf_document:
+    toc: yes
+---
+```{r}
+#install.packages("dplyr")
+#install.packages("data.table")
+#install.packages("readxlsb")
+#install.packages("qdapTools")
+```
+
+
+# Hito1 Grupo 9 - Proyecto: **A donde van**
+
+Integrantes: Joaquin Cubelli de Leon, Luckas Diaz Renjifo, Ricardo Lopez Diaz, José Luis Romero y Andres Urrutia Aliaga.
+
+# Introducción
+
+Para este trabajo se utilizaran datos realacionados con el sistema de transporte público metropolitano, en particular las "Matrices de Viajes" relacionado al origen-destino, subida y bajada, recolectadas a partir de software ADATRAP. Esta información fue obtenida de las bases de datos de la tarjeta bip! y de los GPS de los buses.
+
+En estas "Matrices" se tienen 3 tipos de datasets desde el año 2014 al 2019, mientras que para los años 2011 a 2013 se tienen algunos de estos 3 tipos:
+
+-Tabla de viajes: Cada fila de la base de datos, corresponde a un viaje realizado por una persona, en donde es estimado el lugar de subida y bajada de cada etapa de viajes. Se incluyen archivos que detallan los campos y estructuras de las tablas.
+-Tabla de etapas: Es un extracto de la Tabla de Viajes, donde cada fila de la base de datos corresponde a una etapa del viaje realizado por una persona, en donde es estimado el lugar de subida y bajada de la etapa. Se incluyen archivos que detallan los campos y estructuras de las tablas.
+-Tablas agregadas de matrices OD, subidas y bajadas. Contienen un resumen de la información de las tablas de viajes y etapas.
+
+Por otra parte, se ocupará la información recopilada el año 2012 mediante la "Encuesta de Origen y Destino de Viajes Santiago 2012", la cual consistió en encuestar a todos los residentes de 18.000 hogares del Gran Santiago, seleccionados aleatoriamente, en el periodo comprendido entre julio de 2012 y noviembre de 2013.
+
+**Motivación**: nuestra vision sobre el sistema transporte en la gran capital es que existen largas horas de viajes, grandes congestiones de larga duración, deficiencia en la frecuencia de los buses y un descontento generalizado por parte de los usuarios. Esto nos lleva a estudiar estos datos ya que se podría dar pie a mejoras graduales en el sistema de transporte como tal (de las cuales varias que propongamos ya esten probablemente implementadas) como por ejemplo, reforzar el servicio de buses para complementar viajes en horas punta, posiblemente disminuyendo los tiempos de viaje. 
+
+Paginas de los datasets:
+
+- http://www.dtpm.gob.cl/index.php/documentos/matrices-de-viaje
+- https://datos.gob.cl/dataset/31616
+
+**Presentacion**
+
+- https://youtu.be/Qb-9ax1tYVc
+
+# Exploración de datos
+
+La exploración de los datos se hicieron sobre la matriz de viaje del año 2019 y la tabla de viajes del año 2020, ya que para los datos de otros años seria repetir lo presentado en esta sección.
+
+## Definir directorio a trabajar:
+```{r eval=F}
+# Asignamos nuestro "working directory" (set w. d.) como el directorio ~/RDATA
+setwd(choose.dir())
+#setwd("D:/UdeChile/12Semestre/Intro Mineria/Proyecto/Datos2019")
+```
+Otra opcion es ir a "Session"->"Set Working Directory"->"Chooose Directory" para elegir el directorio.
+
+## Cargar remotamente los datos:
+```{r}
+#temp <- tempfile()
+#download.file("http://www.dtpm.gob.cl/descargas/tablas/tabla-viajes.rar", 
+#              temp)
+#con <- unz(temp, "gbr_Country_en_csv_v2.csv")
+#dat <- read.table(con, header=T, skip=2, sep=",")
+#unlink(temp)
+```
+
+## Cargar los datos de forma local:
+
+Para cargar los datos de forma local, se debe clonar el proyecto desde el repositorio de github, donde se tiene la carpeta 'datos' que contiene todos los archivos que se cargar.
+
+Al dataset 'viajeslaboral_2020' se le aplico un sample anterior a cargarlo a rstudio, ya que consistia en un archivo de caso 10gb de información.
+```{r message=FALSE}
+library(readr)
+
+loc <- locale("es", decimal_mark = ',', encoding = 'latin1')
+
+# 2020
+viajeslaboral_2020 <- read_csv2('datos/viajes2020_03_laboral_100k.csv', locale = loc, na = c('-', 'NA'), guess_max = 10000)
+
+# 2019
+matriz_2019.08 <- read_csv2('datos/2019Agosto_05_09.MatrizODviajes_comunas_mediahora.csv', locale = loc)
+subidas_2019.08 <- read_csv2('datos/2019Agosto_05_09.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
+#matriz_2019.04 <- read_csv2('datos/tablasWeb2019Abril_01_05.MatrizODComunasMediaHora.csv', locale = loc)
+#subidas_2019.04 <- read_csv2('datos/tablasWeb2019Abril_01_05.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
+
+# 2018
+#matriz_2018.10 <- read_csv2('datos/tablasWeb2018Oct_08_12.MatrizODComunasMediaHora.csv', locale = loc)
+#subidas_2018.10 <- read_csv2('datos/tablasWeb2018Oct_08_12.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
+matriz_2018.04 <- read.csv2('datos/2018abril_09_13.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+subidas_2018.04 <- read.csv2('datos/2018abril_09_13.Subidas_paradero_mediahora.csv', na = c('-', 'NA'), sep = '|')
+
+# 2017
+matriz_2017.04 <- read.csv2('datos/2017abril_(3.4.6.7.12).MatrizODviajes_comunas_mediahora.csv', sep = '|')
+subidas_2017.04 <- read.csv2('datos/2017abril_(3.4.6.7.12).Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
+
+# 2016
+matriz_2016.05 <- read.csv2('datos/2016mayo_23_27.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+subidas_2016.05 <- read.csv2('datos/2016mayo_23_27.Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
+
+# 2015
+matriz_2015.04 <- read.csv2('datos/2015abril_20_24.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+subidas_2015.04 <- read.csv2('datos/2015abril_20_24.Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
+
+# 2014
+matriz_2014.05 <- read.csv2('datos/2014mayo_26_30.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+subidas_2014.05 <- read.csv2('datos/2014mayo_26_30.Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
+
+# 2013
+matriz_2013.04 <- read.csv2('datos/2013abril_15_19.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+subidas_2013.04 <- read.csv2('datos/2013abril_15_19.Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
+
+# 2012
+matriz_2012.04 <- read.csv2('datos/2012abril_16_20.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+subidas_2012.04 <- read.csv2('datos/2012abril_16_20.Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
+
+# 2011
+matriz_2011.04 <- read.csv2('datos/2011abril_11_15.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+
+
+# Encuesta
+viajes_encuesta <- read_csv2('datos/viajes.csv', locale = loc)
+hogares_encuesta <- read_csv2('datos/Hogares.csv', locale = loc)
+personas_encuesta <- read_csv2('datos/personas.csv', locale = loc)
+comunas_encuesta <- read_csv2('datos/Comuna.csv', locale = loc)
+propositos_encuesta <- read_csv2('datos/Proposito.csv', locale = loc)
+tipodia_encuesta <- read_csv2('datos/TipoDia.csv', locale = loc)
+sexo_encuesta <- read_csv2('datos/Sexo.csv', locale = loc)
+adultomayor_encuesta <- read_csv2('datos/AdultoMayor.csv', locale = loc)
+estudios_encuesta <- read_csv2('datos/Estudios.csv', locale = loc)
+```
+
+## Atributos del dataset matriz_2019.08:
+
+```{r}
+library(dplyr)
+
+# select character columns 'char1', 'char2', etc. to factor:
+matriz_2019.08 <- mutate_at(matriz_2019.08, vars('ComunaSubida', 'ComunaBajada'), as.factor)
+
+str(matriz_2019.08)
+
+summary(matriz_2019.08)
+
+head(matriz_2019.08,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(matriz_2019.08, function(x) sum(is.na(x)))
+```
+No se encontraron datos NA.
+
+**Datos 0**:
+```{r}
+sapply(matriz_2019.08, function(x) sum(x==0))
+```
+
+Con lo anterior se aprecia que las columnas "Viajes4Etapas" y "Viajes5oMasEtapas" poseen gran cantidad de valores 0, teniendo en cuenta que el dataset consta de 44660 observaciones. Entonces estas columnas no se contemplaran. Luego hay que decidir sobre el resto de valores 0, ya que estos pueden ser reemplazados por un promedio de la columna o de alguna otra forma.
+
+```{r}
+# Se eliminan las columnas "Viajes4Etapas" y "Viajes5oMasEtapas"
+matriz_2019.08$Viajes4Etapas <- NULL
+matriz_2019.08$Viajes5oMasEtapas <- NULL
+```
+
+**Datos Negativos**:
+```{r}
+# se aplica solo a los datos numericos
+sapply(matriz_2019.08[,4:10], function(x) sum(x<0))
+```
+
+Lo anterior evidencia que no hay datos negativos que puedan afectar en algun analisis.
+
+## Atributos del dataset subidas_2019.08:
+
+```{r}
+subidas_2019.08 <- mutate_at(subidas_2019.08, vars("ParadaSubida"), as.factor)
+
+str(subidas_2019.08)
+
+summary(subidas_2019.08)
+
+head(subidas_2019.08,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(subidas_2019.08, function(x) sum(is.na(x)))
+```
+Hay datos NA para las paradas de subida, pero son pocas filas, por lo tanto las podemos descartar.
+
+```{r}
+subidas_2019.08 <- na.omit(subidas_2019.08)
+sapply(subidas_2019.08, function(x) sum(is.na(x)))
+```
+
+
+**Datos igual a 0**:
+```{r}
+sapply(subidas_2019.08, function(x) sum(x==0))
+```
+Se encontraron pocos datos igual a 0, con relacion a la cantidad de datos de la tabla. Estos valores no son ruido, ya que representan las 12 de la noche o mas bien las 00:00 horas.
+
+**Datos negativos**:
+```{r}
+sapply(subidas_2019.08["SubidasPromedio"], function(x) sum(x<0))
+```
+No se encontraron datos negativos.
+
+## Atributos dataset viajeslaboral_2020
+```{r}
+str(viajeslaboral_2020)
+head(viajeslaboral_2020)
+```
+
+**Datos NA**:
+```{r}
+aux <- sapply(viajeslaboral_2020, function(x) sum(is.na(x)))
+(aux[order(aux, decreasing = TRUE)])[0:10]
+```
+Aqui se encuentran gran cantidad de datos con valores NA. A continuacion se procede a eliminar ciertas columnas.
+
+```{r}
+#Se eliminan columnas NA
+viajeslaboral_2020<- viajeslaboral_2020[, colSums((is.na(viajeslaboral_2020))) < 90000]
+aux <- sapply(viajeslaboral_2020, function(x) sum(is.na(x)))
+(aux[order(aux, decreasing = TRUE)])[0:10]
+```
+Se eliminaron 52 columnas que contenian más de 90000 datos NA. Pero siguen existiendo gran numero de datos NA en numerosas columnas. Si se reduce el umbral definido en el comando anterior, se reducen considerablemente el numero de columnas en la tabla.
+
+```{r}
+#Se eliminan filas con solo NA
+viajeslaboral_2020 <- viajeslaboral_2020[rowSums(is.na(viajeslaboral_2020)) != ncol(viajeslaboral_2020), ]
+```
+Se eliminaron 2 filas de datos NA
+
+**Datos iguales a 0**:
+```{r}
+library(tidyr)
+library(tibble)
+viajeslaboral_2020 %>%
+  select(everything()) %>%
+  summarise_all(funs(sum(!is.na(.) & .==0))) %>%
+  rownames_to_column() %>% # Transponer sin perder información 
+  gather(var, value, -rowname) %>%
+  spread(rowname, value) %>%
+  head()
+```
+Luego de eliminar los datos NA, se obtuvo los resultados previos.
+
+
+**Datos negativos**:
+```{r}
+viajeslaboral_2020 %>%
+  select(everything()) %>%
+  summarise_all(funs(sum(!is.na(.) & .<0))) %>%
+  rownames_to_column() %>% # Transponer sin perder información 
+  gather(var, value, -rowname) %>%
+  spread(rowname, value) %>%
+  head()
+```
+## Atributos dataset viajes_encuesta
+```{r}
+str(viajes_encuesta)
+head(viajes_encuesta)
+```
+
+**Datos NA**:
+```{r}
+aux <- sapply(viajes_encuesta, function(x) sum(is.na(x)))
+(aux[order(aux, decreasing = TRUE)])[0:10]
+```
+Se encuentran gran cantidad de datos NA en 5 columnas. Teniendo en cuenta la cantidad total de datos en este dataset, las columnas "FactorFindesemanaEstival", "FactorDomingoNormal", "FactorSabadoNormal", "FactorLaboralEstival" y "ActividadDestino" se eliminaran
+
+```{r}
+# Se elimina la columna "ActividadDestino"
+viajes_encuesta$FactorFindesemanaEstival <- NULL
+viajes_encuesta$FactorDomingoNormal <- NULL
+viajes_encuesta$FactorSabadoNormal <- NULL
+viajes_encuesta$FactorLaboralEstival <- NULL
+viajes_encuesta$ActividadDestino <- NULL
+```
+
+**Datos igual a 0**:
+```{r}
+viajes_encuesta %>%
+  select(everything()) %>%
+  summarise_all(funs(sum(!is.na(.) & .==0))) %>%
+  rownames_to_column() %>% # Transponer sin perder información 
+  gather(var, value, -rowname) %>%
+  spread(rowname, value) %>%
+  head()
+```
+Se encuentran gran cantidad de datos igual a 0 en 6 columnas. Esto no constituyen ruido ya que se relacionan con zonas geograficas.
+
+**Datos negativos**:
+```{r}
+viajes_encuesta %>%
+  select(everything()) %>%
+  summarise_all(funs(sum(!is.na(.) & .<0))) %>%
+  rownames_to_column() %>% # Transponer sin perder información 
+  gather(var, value, -rowname) %>%
+  spread(rowname, value) %>%
+  select(neg_cnt = 2) %>% # Renombrar número de datos negativos
+  summarise(datos_negativos = sum(neg_cnt))
+```
+No hay datos negativos
+
+**Reemplazar ID de las comunas por sus nombres**
+```{r}
+library(qdapTools)
+viajes_encuesta$ComunaOrigen <- data.frame(viajes_encuesta)$ComunaOrigen %lc+% data.frame(comunas_encuesta)
+viajes_encuesta$ComunaDestino <- data.frame(viajes_encuesta)$ComunaDestino %lc+% data.frame(comunas_encuesta)
+```
+
+**Reemplazar ID de los propositos de viajes por sus nombres**
+```{r}
+viajes_encuesta$Proposito <- data.frame(viajes_encuesta)$Proposito %lc+% data.frame(propositos_encuesta)
+```
+
+## Atributos dataset hogares_encuesta
+```{r}
+str(hogares_encuesta)
+head(hogares_encuesta)
+```
+
+**Datos NA**:
+```{r}
+aux <- sapply(hogares_encuesta, function(x) sum(is.na(x)))
+(aux[order(aux, decreasing = TRUE)])[0:10]
+```
+Solo en una columna se encuentra un gran numero de datos NA. Esta columna se eliminará.
+
+```{r}
+# Se elimina la columna con muchos datos NA
+hogares_encuesta$MontoDiv <- NULL
+```
+
+**Datos igual a 0**:
+```{r}
+aux <- sapply(hogares_encuesta, function(x) sum(x==0))
+(aux[order(aux, decreasing = TRUE)])[0:10]
+```
+En 5 columnas se encuentran gran numero de ceros. Estas columnas se eliminarán
+
+```{r}
+# Se eliminan las columnas con muchos datos igual a 0
+hogares_encuesta$ImputadoDiv <- NULL
+hogares_encuesta$NumBicNino <- NULL
+hogares_encuesta$ImputadoArr <- NULL
+hogares_encuesta$NumVeh <- NULL
+hogares_encuesta$NumBicAdulto <- NULL
+```
+
+**Datos negativos**:
+```{r}
+aux <- sapply(hogares_encuesta, function(x) sum(x<0))
+(aux[order(aux, decreasing = TRUE)])[0:15]
+```
+No se encuentran datos negativos.
+
+**Reemplazar ID de los tipo de dias por sus nombres**
+```{r}
+hogares_encuesta$TipoDia <- data.frame(hogares_encuesta)$TipoDia %lc+% data.frame(tipodia_encuesta)
+```
+
+## Atributos dataset personas_encuesta
+```{r}
+str(personas_encuesta)
+head(personas_encuesta)
+```
+
+**Datos NA**:
+```{r}
+aux <- sapply(personas_encuesta, function(x) sum(is.na(x)))
+(aux[order(aux, decreasing = TRUE)])[0:15]
+```
+En varias columnas se encuentran numerosos datos NA. Se eliminarán los primeras 12 columnas con mayor numero de NA, ya que las otras podrian entregar información interesante.
+
+```{r}
+# Se eliminan las columnas con muchos datos NA
+personas_encuesta$TarjetaBip <- NULL
+personas_encuesta$Factor_FindesemanaEstival <- NULL
+personas_encuesta$Factor_DomingoNormal <- NULL
+personas_encuesta$Factor_SábadoNormal <- NULL
+personas_encuesta$Factor_LaboralEstival <- NULL
+personas_encuesta$MedioViajeRestricion <- NULL
+personas_encuesta$DirEstudiosCoordX <- NULL
+personas_encuesta$DirEstudiosCoordY<- NULL
+personas_encuesta$NoViaja <- NULL
+personas_encuesta$DondeEstudia <- NULL
+personas_encuesta$DirActividadCoordX <- NULL
+personas_encuesta$DirActividadCoordY <- NULL
+
+```
+
+**Datos igual a 0**:
+```{r}
+aux <- sapply(personas_encuesta, function(x) sum(x==0))
+(aux[order(aux, decreasing = TRUE)])[0:10]
+```
+En 6 columnas se encuentran varios valores iguales a 0. Aquí solo se eliminara la columna con mayor numero de valores igual a 0.
+
+```{r}
+# Se eliminan las columnas con muchos datos NA
+personas_encuesta$IngresoImputado <- NULL
+```
+
+**Datos negativos**:
+```{r}
+aux <- sapply(personas_encuesta, function(x) sum(x<0))
+(aux[order(aux, decreasing = TRUE)])[0:15]
+```
+No se encontraron datos negativos.
+
+**Reemplazar ID de sexo por sus nombres**
+```{r}
+personas_encuesta$Sexo <- data.frame(personas_encuesta)$Sexo %lc+% data.frame(sexo_encuesta)
+```
+
+**Reemplazar ID de AdultoMayor por sus nombres**
+```{r}
+personas_encuesta$AdultoMayor <- data.frame(personas_encuesta)$AdultoMayor %lc+% data.frame(adultomayor_encuesta)
+```
+
+**Reemplazar ID de Estudios por sus nombres**
+```{r}
+personas_encuesta$Estudios <- data.frame(personas_encuesta)$Estudios %lc+% data.frame(estudios_encuesta)
+```
+
+## Atributos del dataset matriz_2018.04:
+
+```{r}
+library(dplyr)
+
+# select character columns 'char1', 'char2', etc. to factor:
+matriz_2018.04 <- mutate_at(matriz_2018.04, vars('ComunaSubida', 'ComunaBajada'), as.factor)
+
+str(matriz_2018.04)
+
+summary(matriz_2018.04)
+
+head(matriz_2018.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(matriz_2018.04, function(x) sum(is.na(x)))
+```
+No se encontraron datos NA.
+
+**Datos 0**:
+```{r}
+sapply(matriz_2018.04, function(x) sum(x==0))
+```
+
+Con lo anterior se aprecia que las columnas "Viajes4Etapas" y "Viajes5oMasEtapas" poseen gran cantidad de valores 0, teniendo en cuenta que el dataset consta de 44660 observaciones. Entonces estas columnas no se contemplaran. Luego hay que decidir sobre el resto de valores 0, ya que estos pueden ser reemplazados por un promedio de la columna o de alguna otra forma.
+
+```{r}
+# Se eliminan las columnas "Viajes4Etapas" y "Viajes5oMasEtapas"
+matriz_2018.04$Viajes4Etapas <- NULL
+matriz_2018.04$Viajes5oMasEtapas <- NULL
+```
+
+**Datos Negativos**:
+```{r}
+# se aplica solo a los datos numericos
+sapply(matriz_2018.04[,4:10], function(x) sum(x<0))
+```
+
+Lo anterior evidencia que no hay datos negativos que puedan afectar en algun analisis.
+
+## Atributos del dataset subidas_2018.04:
+
+```{r}
+subidas_2018.04 <- mutate_at(subidas_2018.04, vars("ParadaSubida"), as.factor)
+
+str(subidas_2018.04)
+
+summary(subidas_2018.04)
+
+head(subidas_2018.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(subidas_2018.04, function(x) sum(is.na(x)))
+```
+Hay datos NA para las paradas de subida, pero son pocas filas, por lo tanto las podemos descartar.
+
+```{r}
+subidas_2018.04 <- na.omit(subidas_2018.04)
+sapply(subidas_2018.04, function(x) sum(is.na(x)))
+```
+
+
+**Datos igual a 0**:
+```{r}
+sapply(subidas_2018.04, function(x) sum(x==0))
+```
+Se encontraron pocos datos igual a 0, con relacion a la cantidad de datos de la tabla. Estos valores no son ruido, ya que representan las 12 de la noche o mas bien las 00:00 horas.
+
+**Datos negativos**:
+```{r}
+sapply(subidas_2018.04["SubidasPromedio"], function(x) sum(x<0))
+```
+No se encontraron datos negativos.
+
+## Atributos del dataset matriz_2017.04:
+
+```{r}
+library(dplyr)
+
+# select character columns 'char1', 'char2', etc. to factor:
+matriz_2017.04 <- mutate_at(matriz_2017.04, vars('ComunaSubida', 'ComunaBajada'), as.factor)
+
+str(matriz_2017.04)
+
+summary(matriz_2017.04)
+
+head(matriz_2017.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(matriz_2017.04, function(x) sum(is.na(x)))
+```
+No se encontraron datos NA.
+
+**Datos 0**:
+```{r}
+sapply(matriz_2017.04, function(x) sum(x==0))
+```
+
+Con lo anterior se aprecia que las columnas "Viajes4Etapas" y "Viajes5oMasEtapas" poseen gran cantidad de valores 0, teniendo en cuenta que el dataset consta de 44991 observaciones. Entonces estas columnas no se contemplaran. Luego hay que decidir sobre el resto de valores 0, ya que estos pueden ser reemplazados por un promedio de la columna o de alguna otra forma.
+
+```{r}
+# Se eliminan las columnas "Viajes4Etapas" y "Viajes5oMasEtapas"
+matriz_2017.04$Viajes4Etapas <- NULL
+matriz_2017.04$Viajes5oMasEtapas <- NULL
+```
+
+**Datos Negativos**:
+```{r}
+# se aplica solo a los datos numericos
+sapply(matriz_2017.04[,4:10], function(x) sum(x<0))
+```
+
+Lo anterior evidencia que no hay datos negativos que puedan afectar en algun analisis.
+
+## Atributos del dataset subidas_2017.04:
+
+```{r}
+subidas_2017.04 <- mutate_at(subidas_2017.04, vars("ParadaSubida"), as.factor)
+
+str(subidas_2017.04)
+
+summary(subidas_2017.04)
+
+head(subidas_2017.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(subidas_2017.04, function(x) sum(is.na(x)))
+```
+Hay datos NA para las paradas de subida, pero son pocas filas, por lo tanto las podemos descartar.
+
+```{r}
+subidas_2017.04 <- na.omit(subidas_2017.04)
+sapply(subidas_2017.04, function(x) sum(is.na(x)))
+```
+
+
+**Datos igual a 0**:
+```{r}
+sapply(subidas_2017.04, function(x) sum(x==0))
+```
+Se encontraron pocos datos igual a 0, con relacion a la cantidad de datos de la tabla. Estos valores no son ruido, ya que representan las 12 de la noche o mas bien las 00:00 horas.
+
+**Datos negativos**:
+```{r}
+sapply(subidas_2017.04["SubidasPromedio"], function(x) sum(x<0))
+```
+No se encontraron datos negativos.
+
+## Atributos del dataset matriz_2016.05:
+
+```{r}
+library(dplyr)
+
+# select character columns 'char1', 'char2', etc. to factor:
+matriz_2016.05 <- mutate_at(matriz_2016.05, vars('comunasubida', 'comunabajada'), as.factor)
+
+str(matriz_2016.05)
+
+summary(matriz_2016.05)
+
+head(matriz_2016.05,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(matriz_2016.05, function(x) sum(is.na(x)))
+```
+No se encontraron datos NA.
+
+**Datos 0**:
+```{r}
+sapply(matriz_2016.05, function(x) sum(x==0))
+```
+En lo anterior no se aprecian datos igual a cero.
+
+**Datos Negativos**:
+```{r}
+# se aplica solo a los datos numericos
+sapply(matriz_2016.05[,4:10], function(x) sum(x<0))
+```
+
+REVISAR!!!!!!!!!!!!!!!.
+
+## Atributos del dataset subidas_2016.05:
+
+```{r}
+subidas_2016.05 <- mutate_at(subidas_2016.05, vars("paraderosubida"), as.factor)
+
+str(subidas_2016.05)
+
+summary(subidas_2016.05)
+
+head(subidas_2016.05,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(subidas_2016.05, function(x) sum(is.na(x)))
+```
+Hay datos NA para las paradas de subida, pero son pocas filas, por lo tanto las podemos descartar.
+
+```{r}
+subidas_2016.05 <- na.omit(subidas_2016.05)
+sapply(subidas_2016.05, function(x) sum(is.na(x)))
+```
+
+
+**Datos igual a 0**:
+```{r}
+sapply(subidas_2016.05, function(x) sum(x==0))
+```
+No se encontraron datos igual a 0.
+
+**Datos negativos**:
+```{r}
+sapply(subidas_2016.05["subidas_laboral_promedio"], function(x) sum(x<0))
+```
+No se encontraron datos negativos.
+
+## Atributos del dataset matriz_2015.04:
+
+```{r}
+library(dplyr)
+
+# select character columns 'char1', 'char2', etc. to factor:
+matriz_2015.04 <- mutate_at(matriz_2015.04, vars('comunasubida', 'comunabajada'), as.factor)
+
+str(matriz_2015.04)
+
+summary(matriz_2015.04)
+
+head(matriz_2015.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(matriz_2015.04, function(x) sum(is.na(x)))
+```
+MUCHOS DATOS NA, RESOLVER QUE HACER !!!!!!!.
+
+**Datos 0**:
+```{r}
+sapply(matriz_2015.04, function(x) sum(x==0))
+```
+En lo anterior no se aprecian datos igual a cero.
+
+**Datos Negativos**:
+```{r}
+# se aplica solo a los datos numericos
+sapply(matriz_2015.04[,4:10], function(x) sum(x<0))
+```
+
+REVISAR!!!!!!!!!!!!!!!.
+
+## Atributos del dataset subidas_2015.04:
+
+```{r}
+subidas_2015.04 <- mutate_at(subidas_2015.04, vars("paraderosubida"), as.factor)
+
+str(subidas_2015.04)
+
+summary(subidas_2015.04)
+
+head(subidas_2015.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(subidas_2015.04, function(x) sum(is.na(x)))
+```
+Hay datos NA para las paradas de subida, pero son pocas filas, por lo tanto las podemos descartar.
+
+```{r}
+subidas_2015.04 <- na.omit(subidas_2015.04)
+sapply(subidas_2015.04, function(x) sum(is.na(x)))
+```
+
+
+**Datos igual a 0**:
+```{r}
+sapply(subidas_2015.04, function(x) sum(x==0))
+```
+No se encontraron datos igual a 0.
+
+**Datos negativos**:
+```{r}
+sapply(subidas_2015.04["subidas_laboral_promedio"], function(x) sum(x<0))
+```
+No se encontraron datos negativos.
+
+## Atributos del dataset matriz_2014.05:
+
+```{r}
+library(dplyr)
+
+# select character columns 'char1', 'char2', etc. to factor:
+matriz_2014.05 <- mutate_at(matriz_2014.05, vars('comunasubida', 'comunabajada'), as.factor)
+
+str(matriz_2014.05)
+
+summary(matriz_2014.05)
+
+head(matriz_2014.05,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(matriz_2014.05, function(x) sum(is.na(x)))
+```
+No se encuentran datos NA.
+
+**Datos 0**:
+```{r}
+sapply(matriz_2014.05, function(x) sum(x==0))
+```
+MUCHOS DATOS 0, RESOLVER QUE HACER!!!!!!!!.
+
+**Datos Negativos**:
+```{r}
+# se aplica solo a los datos numericos
+sapply(matriz_2014.05[,4:10], function(x) sum(x<0))
+```
+
+No hay datos negativos.
+
+## Atributos del dataset subidas_2014.05:
+
+```{r}
+subidas_2014.05 <- mutate_at(subidas_2014.05, vars("paraderosubida"), as.factor)
+
+str(subidas_2014.05)
+
+summary(subidas_2014.05)
+
+head(subidas_2014.05,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(subidas_2014.05, function(x) sum(is.na(x)))
+```
+Hay datos NA para las paradas de subida, pero son pocas filas, por lo tanto las podemos descartar.
+
+```{r}
+subidas_2014.05 <- na.omit(subidas_2014.05)
+sapply(subidas_2014.05, function(x) sum(is.na(x)))
+```
+
+
+**Datos igual a 0**:
+```{r}
+sapply(subidas_2014.05, function(x) sum(x==0))
+```
+No se encontraron datos igual a 0.
+
+**Datos negativos**:
+```{r}
+sapply(subidas_2014.05["subidas_laboral_promedio"], function(x) sum(x<0))
+```
+No se encontraron datos negativos.
+
+## Atributos del dataset matriz_2013.04:
+
+```{r}
+library(dplyr)
+
+# select character columns 'char1', 'char2', etc. to factor:
+matriz_2013.04 <- mutate_at(matriz_2013.04, vars('comunasubida', 'comunabajada'), as.factor)
+
+str(matriz_2013.04)
+
+summary(matriz_2013.04)
+
+head(matriz_2013.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(matriz_2013.04, function(x) sum(is.na(x)))
+```
+No se encuentran datos NA.
+
+**Datos 0**:
+```{r}
+sapply(matriz_2013.04, function(x) sum(x==0))
+```
+No hay datos igual a 0.
+
+**Datos Negativos**:
+```{r}
+# se aplica solo a los datos numericos
+sapply(matriz_2013.04[,4:10], function(x) sum(x<0))
+```
+
+MUCHOS DATOS NEGATIVOS, REVISAR QUE HACER CON ESTO.
+
+## Atributos del dataset subidas_2013.04:
+
+```{r}
+subidas_2013.04 <- mutate_at(subidas_2013.04, vars("paraderosubida"), as.factor)
+
+str(subidas_2013.04)
+
+summary(subidas_2013.04)
+
+head(subidas_2013.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(subidas_2013.04, function(x) sum(is.na(x)))
+```
+Hay datos NA para las paradas de subida, pero son pocas filas, por lo tanto las podemos descartar.
+
+```{r}
+subidas_2013.04 <- na.omit(subidas_2013.04)
+sapply(subidas_2013.04, function(x) sum(is.na(x)))
+```
+
+
+**Datos igual a 0**:
+```{r}
+sapply(subidas_2013.04, function(x) sum(x==0))
+```
+No se encontraron datos igual a 0.
+
+**Datos negativos**:
+```{r}
+sapply(subidas_2013.04["subidas_laboral_promedio"], function(x) sum(x<0))
+```
+No se encontraron datos negativos.
+
+## Atributos del dataset matriz_2012.04:
+
+```{r}
+library(dplyr)
+
+# select character columns 'char1', 'char2', etc. to factor:
+matriz_2012.04 <- mutate_at(matriz_2012.04, vars('comunasubida', 'comunabajada'), as.factor)
+
+str(matriz_2012.04)
+
+summary(matriz_2012.04)
+
+head(matriz_2012.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(matriz_2012.04, function(x) sum(is.na(x)))
+```
+No se encuentran datos NA.
+
+**Datos 0**:
+```{r}
+sapply(matriz_2012.04, function(x) sum(x==0))
+```
+
+MUCHOS DATOS IGUAL A 0, RESOLVER QUE HACER CON ESTO.
+
+**Datos Negativos**:
+```{r}
+# se aplica solo a los datos numericos
+sapply(matriz_2012.04[,4:10], function(x) sum(x<0))
+```
+
+No hay datos negativos.
+
+## Atributos del dataset subidas_2012.04:
+
+```{r}
+subidas_2012.04 <- mutate_at(subidas_2012.04, vars("paradero"), as.factor)
+
+str(subidas_2012.04)
+
+summary(subidas_2012.04)
+
+head(subidas_2012.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(subidas_2012.04, function(x) sum(is.na(x)))
+```
+Hay datos NA para las paradas de subida, pero son pocas filas, por lo tanto las podemos descartar.
+
+```{r}
+subidas_2012.04 <- na.omit(subidas_2012.04)
+sapply(subidas_2012.04, function(x) sum(is.na(x)))
+```
+
+
+**Datos igual a 0**:
+```{r}
+sapply(subidas_2012.04, function(x) sum(x==0))
+```
+No se encontraron datos igual a 0.
+
+**Datos negativos**:
+```{r}
+sapply(subidas_2012.04["subidas"], function(x) sum(x<0))
+```
+No se encontraron datos negativos.
+
+## Atributos del dataset matriz_2011.04:
+
+```{r}
+library(dplyr)
+
+# select character columns 'char1', 'char2', etc. to factor:
+matriz_2011.04 <- mutate_at(matriz_2011.04, vars('comunasubida', 'comunabajada'), as.factor)
+
+str(matriz_2011.04)
+
+summary(matriz_2011.04)
+
+head(matriz_2011.04,10)
+```
+
+**Datos NA**:
+```{r}
+sapply(matriz_2011.04, function(x) sum(is.na(x)))
+```
+RESOLVER QUE HACER CON ESTOS DATOS NA.
+
+**Datos 0**:
+```{r}
+sapply(matriz_2011.04, function(x) sum(x==0))
+```
+
+MUCHOS DATOS IGUAL A 0, RESOLVER QUE HACER CON ESTO.
+
+**Datos Negativos**:
+```{r}
+# se aplica solo a los datos numericos
+sapply(matriz_2011.04[,4:10], function(x) sum(x<0))
+```
+
+No hay datos negativos.
+
+
+
+
+
+
+
+
+
+
+## Graficos de datset matriz_2019.08
+
+Grafico viajes promedio por hora, ordenado:
+
+```{r}
+library(dplyr)
+library(ggplot2)
+matriz_2019.08 %>%
+  select(MediaHora, ViajeLaboralPromedio) %>%
+  mutate(Hora = as.character(MediaHora)) %>%
+  group_by(Hora) %>%
+  summarise(total = round(sum(ViajeLaboralPromedio))) %>%
+  arrange(Hora)%>% 
+  ggplot(aes(x=Hora, y=total, fill=Hora))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=2.5, angle = 90)+
+  labs(x='', title = 'Numero de viajes promedio por hora', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=6),
+        legend.position = 'none', axis.text.x = element_text(angle = 90, size = 8))
+```
+
+
+Grafico viajes promedio por hora:
+```{r}
+library(dplyr)
+library(ggplot2)
+matriz_2019.08 %>%
+  select(MediaHora, ViajeLaboralPromedio) %>%
+  mutate(Hora = as.character(MediaHora)) %>%
+  group_by(Hora) %>%
+  summarise(total = round(sum(ViajeLaboralPromedio))) %>%
+  arrange(-total)%>% 
+  ggplot(aes(x=reorder(Hora,total), y=total, fill=Hora))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=3)+
+  labs(x='', title = 'Numero de viajes promedio por hora', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=6),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
+  coord_flip()
+```
+
+
+```{r}
+matriz_2019.08 %>%   # Año 2010 y solo comunas
+  group_by(ComunaSubida) %>%                       # Agrupamos por "muerto", "leve", etc
+  summarise(total = round(sum(ViajeLaboralPromedio))) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
+  arrange(-total)%>% 
+  ggplot(aes(x=reorder(ComunaSubida,total), y=total, fill= ComunaSubida))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=3)+
+  labs(x='', title = 'Numero de viajes iniciados en cada comuna', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=8),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
+  coord_flip()+
+  scale_y_continuous(breaks = seq(0,900000,by=50000))
+```
+
+
+
+```{r}
+matriz_2019.08 %>%   # Año 2010 y solo comunas
+  group_by(ComunaBajada) %>%                       # Agrupamos por "muerto", "leve", etc
+  summarise(total = round(sum(ViajeLaboralPromedio))) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
+  arrange(-total)%>% 
+  ggplot(aes(x=reorder(ComunaBajada,total), y=total, fill= ComunaBajada))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=3)+
+  labs(x='', title = 'Numero de viajes finalizados en cada comuna', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=8),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
+  coord_flip()+
+  scale_y_continuous(breaks = seq(0,900000,by=50000))
+```
+
+```{r}
+matriz_2019.08 %>%   # Año 2010 y solo comunas
+  filter(ComunaSubida=="SANTIAGO")%>%
+  group_by(ComunaBajada) %>%                       # Agrupamos por "muerto", "leve", etc
+  summarise(total = round(sum(ViajeLaboralPromedio))) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
+  arrange(-total)%>% 
+  ggplot(aes(x=reorder(ComunaBajada,total), y=total, fill= ComunaBajada))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=3)+
+  labs(x='', title = 'Numero de viajes comenzados en Santiago y finalizado en cada comuna', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=8),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8), plot.title = element_text(size = 13)) +
+  coord_flip()+
+  scale_y_continuous(breaks = seq(0,900000,by=50000))
+```
+
+```{r}
+matriz_2019.08 %>%   # Año 2010 y solo comunas
+  filter(ComunaSubida=="PUENTE ALTO")%>%
+  group_by(ComunaBajada) %>%                       # Agrupamos por "muerto", "leve", etc
+  summarise(total = round(sum(ViajeLaboralPromedio))) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
+  arrange(-total)%>% 
+  ggplot(aes(x=reorder(ComunaBajada,total), y=total, fill= ComunaBajada))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=3)+
+  labs(x='', title = 'Numero de viajes comenzados en Puente Alto y finalizado en cada comuna', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=8),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8), plot.title = element_text(size = 11)) +
+  coord_flip()+
+  scale_y_continuous(breaks = seq(0,900000,by=50000))
+```
+
+## Graficos dataset viajes_encuesta
+```{r}
+viajes_encuesta %>%   # Año 2010 y solo comunas
+  group_by(ComunaOrigen) %>%                       # Agrupamos por "muerto", "leve", etc
+  summarise(total = n()) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
+  arrange(-total)%>% 
+  ggplot(aes(x=reorder(ComunaOrigen,total), y=total, fill= ComunaOrigen))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=3)+
+  labs(x='', title = 'Numero de viajes iniciados en cada comuna', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=6),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
+  coord_flip()+
+  scale_y_continuous(breaks = seq(0,15000,by=1000))
+```
+
+```{r}
+viajes_encuesta %>%   # Año 2010 y solo comunas
+  group_by(Proposito) %>%                       # Agrupamos por "muerto", "leve", etc
+  summarise(total = n()) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
+  arrange(-total)%>% 
+  ggplot(aes(x=reorder(Proposito,total), y=total, fill= Proposito))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=3)+
+  labs(x='', title = 'Proposito del viaje', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=10),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
+  coord_flip()+
+  scale_y_continuous(breaks = seq(0,60000,by=10000))
+```
+
+## Graficos dataset hogares_encuesta
+```{r}
+hogares_encuesta %>%   # Año 2010 y solo comunas
+  group_by(Comuna) %>%                       # Agrupamos por "muerto", "leve", etc
+  summarise(total = n()) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
+  arrange(-total)%>% 
+  ggplot(aes(x=reorder(Comuna,total), y=total, fill= Comuna))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=3)+
+  labs(x='', title = 'Hogares encuestados por comuna', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=6),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
+  coord_flip()+
+  scale_y_continuous(breaks = seq(0,2000,by=500))
+```
+
+## Graficos dataset personas_encuesta
+```{r}
+personas_encuesta %>%   # Año 2010 y solo comunas
+  group_by(Sexo) %>%                       # Agrupamos por "muerto", "leve", etc
+  summarise(total = n()) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
+  arrange(-total)%>% 
+  ggplot(aes(x=reorder(Sexo,total), y=total, fill= Sexo))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=3)+
+  labs(x='', title = '"Genero" de personas encuestadas', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=12),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
+  coord_flip()+
+  scale_y_continuous(breaks = seq(0,32000,by=5000))
+```
+
+```{r}
+personas_encuesta %>%   # Año 2010 y solo comunas
+  group_by(Estudios) %>%                       # Agrupamos por "muerto", "leve", etc
+  summarise(total = n()) %>%              # Creamos una nueva columna a partir de cada grupo, llamada "total"
+  arrange(-total)%>% 
+  ggplot(aes(x=reorder(Estudios,total), y=total, fill= Estudios))+ 
+  geom_bar(stat = 'identity')+
+  geom_text(aes(label=total), size=3)+
+  labs(x='', title = 'Estudios de personas encuestadas', y="Frecuencia") +
+  theme(axis.text.y = element_text(size=9),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
+  coord_flip()+
+  scale_y_continuous(breaks = seq(0,32000,by=5000))
+```
+
+```{r}
+viajeslaboral_2020 %>%
+  filter(!is.na(tviaje_seg)) %>%
+  filter(!is.na(comunasubida)) %>%
+  group_by(comunasubida) %>%
+  summarise(median_time = median(tviaje_seg/60.)) %>%
+  ggplot(aes(x=reorder(comunasubida, median_time), y=median_time, fill=comunasubida)) +
+  geom_bar(stat='identity') +
+  labs(y='Tiempo de viaje [min]', title = 'Tiempo de viaje mediano por comuna de origen', x="") +
+  theme(axis.text.y = element_text(size=6),
+        legend.position = 'none', axis.text.x = element_text(angle = 25, size = 8)) +
+  coord_flip()
+```
+
+# Preguntas y Problemas
+
+En base a la motivación y la exploración de los datos surgieron las siguientes preguntas:
+
+-¿Es posible alargar/recortar el horario de algún recorrido?
+
+-Si agregamos un recorrido (bus o metro) que realice el trayecto de A a B, ¿Cuánta gente utilizaría este nuevo servicio? ¿Como este nuevo servicio descongestionaría el resto de la red?
+
+- Tener en consideración el factor de la gente que no paga, y que el añadir nuevos tramos ayudará a mejorar eso
+
+- Predecir cantidad de viajes de grupos poblacionales segun sexo, ingreso, estudios, residencia, entre otros.
+
+# Contribucion de cada integrante
+
+- **Joaquin Cubelli de Leon**: Editar codigo para arreglar gráficos, redacción de la motivación y confección de presentación audio-visual.
+
+- **Luckas Diaz Renjifo**: Liempieza de datos, realizar graficos, organizar documento .Rmd y confección de presentación audio-visual.
+
+- **Ricardo Lopez Diaz**: Editar codigo para arreglar gráficos, formulación de preguntas/problemas y confección de presentación audio-visual.
+
+- **José Luis Romero**: Sampleo de los datos fuera de Rstudio, mejorar la carga de datos con los tipos correctos, solucionar errores de propagacion de los nulls, realizar graficos y confección de presentación audio-visual.
+
+- **Andres Urrutia Aliaga**: Editar codigo para arreglar gráficos, formulación de preguntas/problemas.
