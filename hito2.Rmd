@@ -1292,14 +1292,7 @@ viajeslaboral_2020 %>%
 
 # Confeccion de dataset
 
-```{r}
-# Comunas segun sector
-unique(matriz_2019.08$ComunaSubida)
-unique(matriz_centronorte$ComunaSubida)
-unique(matriz_sur$ComunaSubida)
-unique(matriz_oriente$ComunaSubida)
-unique(matriz_occidente$ComunaSubida)
-```
+A continuacion se reordenan los datos de las matrices de viajes para tener solo 4 dataframes con la informacion de las comunas de 4 sectores.
 
 ```{r}
 # Comunas segun sector, en base a la distribucion de las fiscalias metropolitanas
@@ -1333,13 +1326,14 @@ matriz_2011.04$Año<- rep(2011,nrow(matriz_2011.04))
 matriz_centronorte <- bind_rows(filter(matriz_2019.08, ComunaSubida %in% comunas_centronorte),
                        filter(matriz_2018.04[, (names(matriz_2018.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
                        filter(matriz_2017.04[, (names(matriz_2017.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
-                       filter(matriz_2016.05[, (names(matriz_2016.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte)#,
-                       #filter(matriz_2015.04[, (names(matriz_2015.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
-                       #filter(matriz_2014.05[, (names(matriz_2014.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
-                       #filter(matriz_2013.04[, (names(matriz_2013.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
-                       #filter(matriz_2012.04[, (names(matriz_2012.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
-                       #filter(matriz_2011.04[, (names(matriz_2011.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte)
-)
+                       filter(matriz_2016.05[, (names(matriz_2016.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       filter(matriz_2015.04[, (names(matriz_2015.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       filter(matriz_2014.05[, (names(matriz_2014.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       filter(matriz_2013.04[, (names(matriz_2013.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       filter(matriz_2012.04[, (names(matriz_2012.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       filter(matriz_2011.04[, (names(matriz_2011.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte))
+
+head(matriz_centronorte,10)
 ```
 
 
@@ -1354,6 +1348,8 @@ matriz_sur <- bind_rows(filter(matriz_2019.08, ComunaSubida %in% comunas_sur),
                        filter(matriz_2013.04[, (names(matriz_2013.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur),
                        filter(matriz_2012.04[, (names(matriz_2012.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur),
                        filter(matriz_2011.04[, (names(matriz_2011.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur))
+
+head(matriz_sur,10)
 ```
 
 ```{r}
@@ -1367,6 +1363,8 @@ matriz_occidente <- bind_rows(filter(matriz_2019.08, ComunaSubida %in% comunas_o
                        filter(matriz_2013.04[, (names(matriz_2013.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente),
                        filter(matriz_2012.04[, (names(matriz_2012.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente),
                        filter(matriz_2011.04[, (names(matriz_2011.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente))
+
+head(matriz_occidente,10)
 ```
 
 ```{r}
@@ -1380,63 +1378,46 @@ matriz_oriente <- bind_rows(filter(matriz_2019.08, ComunaSubida %in% comunas_ori
                        filter(matriz_2013.04[, (names(matriz_2013.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente),
                        filter(matriz_2012.04[, (names(matriz_2012.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente),
                        filter(matriz_2011.04[, (names(matriz_2011.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente))
+
+head(matriz_oriente,10)
 ```
 
+A continuacion se separan los datos del dataframe "hogares_encuesta" segun los sector ya señalados:
+
+```{r}
+hogares_centronorte <- filter(hogares_encuesta, Comuna %in% comunas_centronorte)
+hogares_sur <- filter(hogares_encuesta, Comuna %in% comunas_sur)
+hogares_occidente <- filter(hogares_encuesta, Comuna %in% comunas_occidente)
+hogares_oriente <- filter(hogares_encuesta, Comuna %in% comunas_oriente)
+```
+
+A continuacion se separan los datos del dataframe "viajes_encuesta" segun los sector ya señalados:
+
+```{r}
+viajes_centronorte <- filter(viajes_encuesta, ComunaOrigen %in% comunas_centronorte)
+viajes_sur <- filter(viajes_encuesta, ComunaOrigen %in% comunas_sur)
+viajes_occidente <- filter(viajes_encuesta, ComunaOrigen %in% comunas_occidente)
+viajes_oriente <- filter(viajes_encuesta, ComunaOrigen %in% comunas_oriente)
+```
+
+A continuacion se separan los datos del dataframe "personas_encuesta" segun los sector ya señalados:
+
+```{r}
+personas_centronorte <- filter(personas_encuesta, Hogar %in% hogares_centronorte$Hogar)
+personas_sur <- filter(personas_encuesta, Hogar %in% hogares_sur$Hogar)
+personas_occidente <- filter(personas_encuesta, Hogar %in% hogares_occidente$Hogar)
+personas_oriente <- filter(personas_encuesta, Hogar %in% hogares_oriente$Hogar)
+```
+
+
 # Seleccion de Caracteristicas
+
+REVISAR!!!!!!
 
 ```{r}
 cor(matriz_2019.08[,4:10])
 ```
 
-
-
-# Clustering
-
-```{r}
-# Estandarización de los datos
-datos.centronorte <- scale(matriz_centronorte[,4:11], center = TRUE, scale = TRUE)
-head(datos.centronorte)
-```
-
-```{r}
-library(factoextra)
-fviz_nbclust(x = na.omit(datos.centronorte), FUNcluster = kmeans, method = "wss", k.max = 10, diss = get_dist(na.omit(datos.centronorte), method = "euclidean"), nstart=50)
-```
-
-```{r}
-# Asignación de semilla para resultados reproducibles
-set.seed(123)
-# K-means clustering con K = 4 y 20 asignaciones aleatorias de clústeres iniciales 
-k.means <- kmeans(x = na.omit(datos.centronorte), centers = 4, nstart = 25)
-
-# Suma de cuadrados intra-clúster individual
-k.means$withinss
-
-# Suma de cuadrados intra-clúster total
-k.means$tot.withinss
-
-# Asignación de clústeres de cada observación
-clusteres.km <- k.means$cluster
-```
-
-```{r}
-fviz_cluster(object = k.means, data = na.omit(datos.centronorte), show.clust.cent = TRUE, ellipse.type = "euclid", repel = TRUE) +
-  labs(title = "Resultados clustering K-means") +
-  theme_bw() +
-  theme(legend.position = "none")
-```
-
-```{r}
-library(FactoMineR)
-# Cálculo componentes principals con la función PCA()
-pca.nci <- PCA(X = datos.centronorte, scale.unit = TRUE, ncp = 64, graph = FALSE)
-
-library(factoextra)
-fviz_pca_ind(pca.nci, geom.ind = "point", 
-             col.ind = as.factor(k.means$cluster), 
-             axes = c(1, 2), 
-             pointsize = 1.5)
-```
 
 # Preguntas y Problemas
 
@@ -1449,6 +1430,18 @@ En base a la motivación y la exploración de los datos surgieron las siguientes
 - Tener en consideración el factor de la gente que no paga, y que el añadir nuevos tramos ayudará a mejorar eso
 
 - Predecir cantidad de viajes de grupos poblacionales segun sexo, ingreso, estudios, residencia, entre otros.
+
+**Mejora de Preguntas y problemas**
+Se tiene que tomar en cuenta que se realizó una separacion en los datos entre las comunas de centronorte, occidente, oriente y sur, en base a las distribuciones de las fiscalias metropolitanas.
+
+- ¿Existen caracteristicas especificas o diferenciables entre los sectores de la ciudad al momento de definir una ruta o medio para el transporte?
+- ¿Es posible encontrar grupos de personas en estos mismos sectores?, ¿Seran homogeneos u heterogeneos?, ¿Y si se comparan los grupos entre sectores?
+- ¿Se podrá predecir el sector o comuna de residencia de una persona con informacion de sus viajes, minimizando la informacion personal?
+- ¿Cual seria la informacion necesaria para la prediccion anterior?
+
+# Propuesta Experimental
+
+AGREAGAR!!!!!!!
 
 
 # Contribucion de cada integrante
