@@ -15,6 +15,8 @@ output:
 #install.packages("data.table")
 #install.packages("readxlsb")
 #install.packages("qdapTools")
+#install.packages("FactoMineR")
+#install.packages("factoextra")
 ```
 
 
@@ -81,7 +83,7 @@ loc <- locale("es", decimal_mark = ',', encoding = 'latin1')
 viajeslaboral_2020 <- read_csv2('datos/viajes2020_03_laboral_100k.csv', locale = loc, na = c('-', 'NA'), guess_max = 10000)
 
 # 2019
-matriz_2019.08 <- read_csv2('datos/2019Agosto_05_09.MatrizODviajes_comunas_mediahora.csv', locale = loc)
+matriz_2019.08 <- read_csv2('datos/2019Agosto_05_09.MatrizODviajes_comunas_mediahora.csv', locale = loc, na = c('-', 'NA'))
 subidas_2019.08 <- read_csv2('datos/2019Agosto_05_09.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
 #matriz_2019.04 <- read_csv2('datos/tablasWeb2019Abril_01_05.MatrizODComunasMediaHora.csv', locale = loc)
 #subidas_2019.04 <- read_csv2('datos/tablasWeb2019Abril_01_05.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
@@ -89,35 +91,35 @@ subidas_2019.08 <- read_csv2('datos/2019Agosto_05_09.SubidasPorParadaMediaHora.c
 # 2018
 #matriz_2018.10 <- read_csv2('datos/tablasWeb2018Oct_08_12.MatrizODComunasMediaHora.csv', locale = loc)
 #subidas_2018.10 <- read_csv2('datos/tablasWeb2018Oct_08_12.SubidasPorParadaMediaHora.csv', locale = loc, na = c('-', 'NA'))
-matriz_2018.04 <- read.csv2('datos/2018abril_09_13.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+matriz_2018.04 <- read.csv2('datos/2018abril_09_13.MatrizODviajes_comunas_mediahora.csv', sep = '|', na = c('-', 'NA'))
 subidas_2018.04 <- read.csv2('datos/2018abril_09_13.Subidas_paradero_mediahora.csv', na = c('-', 'NA'), sep = '|')
 
 # 2017
-matriz_2017.04 <- read.csv2('datos/2017abril_(3.4.6.7.12).MatrizODviajes_comunas_mediahora.csv', sep = '|')
+matriz_2017.04 <- read.csv2('datos/2017abril_(3.4.6.7.12).MatrizODviajes_comunas_mediahora.csv', sep = '|', na = c('-', 'NA'))
 subidas_2017.04 <- read.csv2('datos/2017abril_(3.4.6.7.12).Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
 
 # 2016
-matriz_2016.05 <- read.csv2('datos/2016mayo_23_27.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+matriz_2016.05 <- read.csv2('datos/2016mayo_23_27.MatrizODviajes_comunas_mediahora.csv', sep = '|', na = c('-', 'NA'))
 subidas_2016.05 <- read.csv2('datos/2016mayo_23_27.Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
 
 # 2015
-matriz_2015.04 <- read.csv2('datos/2015abril_20_24.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+matriz_2015.04 <- read.csv2('datos/2015abril_20_24.MatrizODviajes_comunas_mediahora.csv', sep = '|', na = c('-', 'NA'))
 subidas_2015.04 <- read.csv2('datos/2015abril_20_24.Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
 
 # 2014
-matriz_2014.05 <- read.csv2('datos/2014mayo_26_30.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+matriz_2014.05 <- read.csv2('datos/2014mayo_26_30.MatrizODviajes_comunas_mediahora.csv', sep = '|', na = c('-', 'NA'))
 subidas_2014.05 <- read.csv2('datos/2014mayo_26_30.Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
 
 # 2013
-matriz_2013.04 <- read.csv2('datos/2013abril_15_19.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+matriz_2013.04 <- read.csv2('datos/2013abril_15_19.MatrizODviajes_comunas_mediahora.csv', sep = '|', na = c('-', 'NA'))
 subidas_2013.04 <- read.csv2('datos/2013abril_15_19.Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
 
 # 2012
-matriz_2012.04 <- read.csv2('datos/2012abril_16_20.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+matriz_2012.04 <- read.csv2('datos/2012abril_16_20.MatrizODviajes_comunas_mediahora.csv', sep = '|', na = c('-', 'NA'))
 subidas_2012.04 <- read.csv2('datos/2012abril_16_20.Subidas_paradero_mediahora.csv', sep = '|', na = c('-', 'NA'))
 
 # 2011
-matriz_2011.04 <- read.csv2('datos/2011abril_11_15.MatrizODviajes_comunas_mediahora.csv', sep = '|')
+matriz_2011.04 <- read.csv2('datos/2011abril_11_15.MatrizODviajes_comunas_mediahora.csv', sep = '|', na = c('-', 'NA'))
 
 
 # Encuesta
@@ -468,7 +470,7 @@ matriz_2018.04$Viajes5oMasEtapas <- NULL
 **Datos Negativos**:
 ```{r}
 # se aplica solo a los datos numericos
-sapply(matriz_2018.04[,4:10], function(x) sum(x<0))
+sapply(matriz_2018.04[,4:11], function(x) sum(x<0))
 ```
 
 Lo anterior evidencia que no hay datos negativos que puedan afectar en algun analisis.
@@ -546,7 +548,7 @@ matriz_2017.04$Viajes5oMasEtapas <- NULL
 **Datos Negativos**:
 ```{r}
 # se aplica solo a los datos numericos
-sapply(matriz_2017.04[,4:10], function(x) sum(x<0))
+sapply(matriz_2017.04[,4:11], function(x) sum(x<0))
 ```
 
 Lo anterior evidencia que no hay datos negativos que puedan afectar en algun analisis.
@@ -602,11 +604,26 @@ summary(matriz_2016.05)
 head(matriz_2016.05,10)
 ```
 
+```{r}
+# palabras en mayusculas
+matriz_2016.05$comunasubida <- toupper(matriz_2016.05$comunasubida)
+matriz_2016.05$comunabajada <- toupper(matriz_2016.05$comunabajada)
+```
+
 **Datos NA**:
 ```{r}
 sapply(matriz_2016.05, function(x) sum(is.na(x)))
 ```
-No se encontraron datos NA.
+Hay varios datos NA, en distintas columnas, se procederá a eliminar alguna de las que tienen mas.
+
+```{r}
+# Se eliminan las columnas "viajes_solo_metro", "viajes_5omas_etapass" y "viajes_4_etapas"
+matriz_2016.05$viajes_solo_metro <- NULL
+matriz_2016.05$viajes_5omas_etapas <- NULL
+matriz_2016.05$viajes_4_etapas <- NULL
+sapply(matriz_2016.05, function(x) sum(is.na(x)))
+```
+
 
 **Datos 0**:
 ```{r}
@@ -620,7 +637,15 @@ En lo anterior no se aprecian datos igual a cero.
 sapply(matriz_2016.05[,4:10], function(x) sum(x<0))
 ```
 
-REVISAR!!!!!!!!!!!!!!!.
+No hay datos negativos.
+
+**Cambiar nombre a las columnas**:
+```{r}
+# Se cambian los nombre de las columnas restantes para que sean iguales a los datos mas recientes
+names(matriz_2016.05)
+names(matriz_2019.08)
+names(matriz_2016.05) <- c("ComunaSubida", "ComunaBajada", "MediaHora", "ViajeLaboralPromedio", "ViajesAdulto", "ViajesEstudiante", "Viajes1Etapa", "Viajes2Etapas", "Viajes3Etapas", "ViajesUsanMetro")
+```
 
 ## Atributos del dataset subidas_2016.05:
 
@@ -677,13 +702,27 @@ head(matriz_2015.04,10)
 ```{r}
 sapply(matriz_2015.04, function(x) sum(is.na(x)))
 ```
-MUCHOS DATOS NA, RESOLVER QUE HACER !!!!!!!.
+Aqui se ven muchos datos NA, y las columnas tienen la misma cantidad, que equivalen a mas de la mitad de los datos, entonces se eliminaran las filas que contengan algun dato NA, para no perder la informacion de toda la columna.
+
+```{r}
+# Se eliminan las filas que contengan algun dato NA
+matriz_2015.04 <- na.omit(matriz_2015.04)
+sapply(matriz_2015.04, function(x) sum(is.na(x)))
+```
 
 **Datos 0**:
 ```{r}
 sapply(matriz_2015.04, function(x) sum(x==0))
 ```
-En lo anterior no se aprecian datos igual a cero.
+En lo anterior nuevamente se encuentran muchos datos iguales a 0, por lo que se eliminaran las columnas que contengan mas.
+
+```{r}
+# Se eliminan las columnas "viajes_solo_metro", "viajes_5omas_etapass" y "viajes_4_etapas"
+matriz_2015.04$viajes_solo_metro <- NULL
+matriz_2015.04$viajes_5omas_etapas <- NULL
+matriz_2015.04$viajes_4_etapas <- NULL
+sapply(matriz_2015.04, function(x) sum(is.na(x)))
+```
 
 **Datos Negativos**:
 ```{r}
@@ -691,7 +730,15 @@ En lo anterior no se aprecian datos igual a cero.
 sapply(matriz_2015.04[,4:10], function(x) sum(x<0))
 ```
 
-REVISAR!!!!!!!!!!!!!!!.
+No se encuentran datos negativos.
+
+**Cambiar nombre a las columnas**:
+```{r}
+# Se cambian los nombre de las columnas restantes para que sean iguales a los datos mas recientes
+names(matriz_2015.04)
+names(matriz_2019.08)
+names(matriz_2015.04) <- c("ComunaSubida", "ComunaBajada", "MediaHora", "ViajeLaboralPromedio", "ViajesAdulto", "ViajesEstudiante", "Viajes1Etapa", "Viajes2Etapas", "Viajes3Etapas", "ViajesUsanMetro")
+```
 
 ## Atributos del dataset subidas_2015.04:
 
@@ -754,7 +801,15 @@ No se encuentran datos NA.
 ```{r}
 sapply(matriz_2014.05, function(x) sum(x==0))
 ```
-MUCHOS DATOS 0, RESOLVER QUE HACER!!!!!!!!.
+Nuevamente se encuentran muchos datos iguales a 0, por lo que se elimminaran las columnas que contengas mas.
+
+```{r}
+# Se eliminan las columnas "viajes_solo_metro", "viajes_5omas_etapass" y "viajes_4_etapas"
+matriz_2014.05$viajes_solo_metro <- NULL
+matriz_2014.05$viajes_5omas_etapas <- NULL
+matriz_2014.05$viajes_4_etapas <- NULL
+sapply(matriz_2014.05, function(x) sum(x==0))
+```
 
 **Datos Negativos**:
 ```{r}
@@ -763,6 +818,14 @@ sapply(matriz_2014.05[,4:10], function(x) sum(x<0))
 ```
 
 No hay datos negativos.
+
+**Cambiar nombre a las columnas**:
+```{r}
+# Se cambian los nombre de las columnas restantes para que sean iguales a los datos mas recientes
+names(matriz_2014.05)
+names(matriz_2019.08)
+names(matriz_2014.05) <- c("ComunaSubida", "ComunaBajada", "MediaHora", "ViajeLaboralPromedio", "ViajesAdulto", "ViajesEstudiante", "Viajes1Etapa", "Viajes2Etapas", "Viajes3Etapas", "ViajesUsanMetro")
+```
 
 ## Atributos del dataset subidas_2014.05:
 
@@ -819,7 +882,15 @@ head(matriz_2013.04,10)
 ```{r}
 sapply(matriz_2013.04, function(x) sum(is.na(x)))
 ```
-No se encuentran datos NA.
+Hay varios datos NA, por lo que a continuacion se eliminaran las columnas que contengan mas .
+
+```{r}
+# Se eliminan las columnas "viajes_solo_metro", "viajes_5omas_etapass" y "viajes_4_etapas"
+matriz_2013.04$viajes_solo_metro <- NULL
+matriz_2013.04$viajes_5omas_etapas <- NULL
+matriz_2013.04$viajes_4_etapas <- NULL
+sapply(matriz_2013.04, function(x) sum(is.na(x)))
+```
 
 **Datos 0**:
 ```{r}
@@ -833,7 +904,15 @@ No hay datos igual a 0.
 sapply(matriz_2013.04[,4:10], function(x) sum(x<0))
 ```
 
-MUCHOS DATOS NEGATIVOS, REVISAR QUE HACER CON ESTO.
+No hay datos negativos.
+
+**Cambiar nombre a las columnas**:
+```{r}
+# Se cambian los nombre de las columnas restantes para que sean iguales a los datos mas recientes
+names(matriz_2013.04)
+names(matriz_2019.08)
+names(matriz_2013.04) <- c("ComunaSubida", "ComunaBajada", "MediaHora", "ViajeLaboralPromedio", "ViajesAdulto", "ViajesEstudiante", "Viajes1Etapa", "Viajes2Etapas", "Viajes3Etapas", "ViajesUsanMetro")
+```
 
 ## Atributos del dataset subidas_2013.04:
 
@@ -897,7 +976,14 @@ No se encuentran datos NA.
 sapply(matriz_2012.04, function(x) sum(x==0))
 ```
 
-MUCHOS DATOS IGUAL A 0, RESOLVER QUE HACER CON ESTO.
+Hay muchos datos igual a 0, por lo que se eliminaran las columnas que tengan mas.
+
+```{r}
+# Se eliminan las columnas "viajes_solo_metro" y "viajes_4_o_mas_etapass"
+matriz_2012.04$viajes_solo_metro <- NULL
+matriz_2012.04$viajes_4_o_mas_etapas <- NULL
+sapply(matriz_2012.04, function(x) sum(x==0))
+```
 
 **Datos Negativos**:
 ```{r}
@@ -906,6 +992,14 @@ sapply(matriz_2012.04[,4:10], function(x) sum(x<0))
 ```
 
 No hay datos negativos.
+
+**Cambiar nombre a las columnas**:
+```{r}
+# Se cambian los nombre de las columnas restantes para que sean iguales a los datos mas recientes
+names(matriz_2012.04)
+names(matriz_2019.08)
+names(matriz_2012.04) <- c("ComunaSubida", "ComunaBajada", "MediaHora", "ViajeLaboralPromedio", "ViajesAdulto", "ViajesEstudiante", "Viajes1Etapa", "Viajes2Etapas", "Viajes3Etapas", "ViajesUsanMetro")
+```
 
 ## Atributos del dataset subidas_2012.04:
 
@@ -962,29 +1056,38 @@ head(matriz_2011.04,10)
 ```{r}
 sapply(matriz_2011.04, function(x) sum(is.na(x)))
 ```
-RESOLVER QUE HACER CON ESTOS DATOS NA.
+No hay datos NA.
 
 **Datos 0**:
 ```{r}
 sapply(matriz_2011.04, function(x) sum(x==0))
 ```
 
-MUCHOS DATOS IGUAL A 0, RESOLVER QUE HACER CON ESTO.
+Hay muchos datos igual a 0, por lo que se eliminaran las columnas que tengan mas.
+
+```{r}
+# Se eliminan las columnas "viajes_solo_metro" y "viajes_4_o_mas_etapass"
+matriz_2011.04$viajes_3_etapas <- NULL
+matriz_2011.04$viajes_4_etapas <- NULL
+matriz_2011.04$viajes_estudiante <- NULL
+sapply(matriz_2011.04, function(x) sum(x==0))
+```
 
 **Datos Negativos**:
 ```{r}
 # se aplica solo a los datos numericos
-sapply(matriz_2011.04[,4:10], function(x) sum(x<0))
+sapply(matriz_2011.04[,4:8], function(x) sum(x<0))
 ```
 
 No hay datos negativos.
 
-
-
-
-
-
-
+**Cambiar nombre a las columnas**:
+```{r}
+# Se cambian los nombre de las columnas restantes para que sean iguales a los datos mas recientes
+names(matriz_2011.04)
+names(matriz_2019.08)
+names(matriz_2011.04) <- c("ComunaSubida", "ComunaBajada", "MediaHora", "ViajeLaboralPromedio", "ViajesAdulto", "Viajes1Etapa", "Viajes2Etapas", "ViajesUsanMetro")
+```
 
 
 
@@ -1186,6 +1289,155 @@ viajeslaboral_2020 %>%
   coord_flip()
 ```
 
+
+# Confeccion de dataset
+
+```{r}
+# Comunas segun sector
+unique(matriz_2019.08$ComunaSubida)
+unique(matriz_centronorte$ComunaSubida)
+unique(matriz_sur$ComunaSubida)
+unique(matriz_oriente$ComunaSubida)
+unique(matriz_occidente$ComunaSubida)
+```
+
+```{r}
+# Comunas segun sector, en base a la distribucion de las fiscalias metropolitanas
+comunas_centronorte <- c('Santiago', 'Estacion Central', 'Quinta Normal', 'Independencia', 'Recoleta', 'Cerro Navia', 'Lo Prado', 'Renca', 'Conchali', 'Quilicura', 'Huechuraba', 'Colina', 'Lampa', 'Til Til')
+comunas_sur <- c('El Bosque', 'La Cisterna', 'La Granja', 'La Pintana', 'Lo Espejo', 'Pedro Aguirre Cerda', 'Puente Alto', 'San Joaquin', 'San Miguel', 'San Ramon', 'Pirque', 'San Jose de Maipo')
+comunas_oriente <- c('Las Condes', 'Vitacura', 'Lo Barnechea', 'La Reina', 'Nunoa', 'La Florida', 'Macul', 'Penalolen')
+comunas_occidente <- c('Maipu', 'Cerrillos', 'Pudahuel', 'San Bernardo', 'Talagante', 'Melipilla', 'Curacavi')
+
+comunas_centronorte <- toupper(comunas_centronorte)
+comunas_sur <- toupper(comunas_sur)
+comunas_oriente <- toupper(comunas_oriente)
+comunas_occidente <- toupper(comunas_occidente)
+```
+
+```{r}
+# Añadir una columna del año de los datos
+matriz_2019.08$Año<- rep(2019,nrow(matriz_2019.08))
+matriz_2018.04$Año<- rep(2018,nrow(matriz_2018.04))
+matriz_2017.04$Año<- rep(2017,nrow(matriz_2017.04))
+matriz_2016.05$Año<- rep(2016,nrow(matriz_2016.05))
+matriz_2015.04$Año<- rep(2015,nrow(matriz_2015.04))
+matriz_2014.05$Año<- rep(2014,nrow(matriz_2014.05))
+matriz_2013.04$Año<- rep(2013,nrow(matriz_2013.04))
+matriz_2012.04$Año<- rep(2012,nrow(matriz_2012.04))
+matriz_2011.04$Año<- rep(2011,nrow(matriz_2011.04))
+```
+
+
+```{r}
+# se juntan los datos de las comunas centronorte
+matriz_centronorte <- bind_rows(filter(matriz_2019.08, ComunaSubida %in% comunas_centronorte),
+                       filter(matriz_2018.04[, (names(matriz_2018.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       filter(matriz_2017.04[, (names(matriz_2017.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       filter(matriz_2016.05[, (names(matriz_2016.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte)#,
+                       #filter(matriz_2015.04[, (names(matriz_2015.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       #filter(matriz_2014.05[, (names(matriz_2014.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       #filter(matriz_2013.04[, (names(matriz_2013.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       #filter(matriz_2012.04[, (names(matriz_2012.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte),
+                       #filter(matriz_2011.04[, (names(matriz_2011.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_centronorte)
+)
+```
+
+
+```{r}
+# se juntan los datos de las comunas del sur
+matriz_sur <- bind_rows(filter(matriz_2019.08, ComunaSubida %in% comunas_sur),
+                       filter(matriz_2018.04[, (names(matriz_2018.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur),
+                       filter(matriz_2017.04[, (names(matriz_2017.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur),
+                       filter(matriz_2016.05[, (names(matriz_2016.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur),
+                       filter(matriz_2015.04[, (names(matriz_2015.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur),
+                       filter(matriz_2014.05[, (names(matriz_2014.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur),
+                       filter(matriz_2013.04[, (names(matriz_2013.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur),
+                       filter(matriz_2012.04[, (names(matriz_2012.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur),
+                       filter(matriz_2011.04[, (names(matriz_2011.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_sur))
+```
+
+```{r}
+# se juntan los datos de las comunas del occidente
+matriz_occidente <- bind_rows(filter(matriz_2019.08, ComunaSubida %in% comunas_occidente),
+                       filter(matriz_2018.04[, (names(matriz_2018.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente),
+                       filter(matriz_2017.04[, (names(matriz_2017.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente),
+                       filter(matriz_2016.05[, (names(matriz_2016.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente),
+                       filter(matriz_2015.04[, (names(matriz_2015.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente),
+                       filter(matriz_2014.05[, (names(matriz_2014.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente),
+                       filter(matriz_2013.04[, (names(matriz_2013.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente),
+                       filter(matriz_2012.04[, (names(matriz_2012.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente),
+                       filter(matriz_2011.04[, (names(matriz_2011.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_occidente))
+```
+
+```{r}
+# se juntan los datos de las comunas del oriente
+matriz_oriente <- bind_rows(filter(matriz_2019.08, ComunaSubida %in% comunas_oriente),
+                       filter(matriz_2018.04[, (names(matriz_2018.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente),
+                       filter(matriz_2017.04[, (names(matriz_2017.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente),
+                       filter(matriz_2016.05[, (names(matriz_2016.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente),
+                       filter(matriz_2015.04[, (names(matriz_2015.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente),
+                       filter(matriz_2014.05[, (names(matriz_2014.05) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente),
+                       filter(matriz_2013.04[, (names(matriz_2013.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente),
+                       filter(matriz_2012.04[, (names(matriz_2012.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente),
+                       filter(matriz_2011.04[, (names(matriz_2011.04) %in% names(matriz_2019.08))], ComunaSubida %in% comunas_oriente))
+```
+
+# Seleccion de Caracteristicas
+
+```{r}
+cor(matriz_2019.08[,4:10])
+```
+
+
+
+# Clustering
+
+```{r}
+# Estandarización de los datos
+datos.centronorte <- scale(matriz_centronorte[,4:11], center = TRUE, scale = TRUE)
+head(datos.centronorte)
+```
+
+```{r}
+library(factoextra)
+fviz_nbclust(x = na.omit(datos.centronorte), FUNcluster = kmeans, method = "wss", k.max = 10, diss = get_dist(na.omit(datos.centronorte), method = "euclidean"), nstart=50)
+```
+
+```{r}
+# Asignación de semilla para resultados reproducibles
+set.seed(123)
+# K-means clustering con K = 4 y 20 asignaciones aleatorias de clústeres iniciales 
+k.means <- kmeans(x = na.omit(datos.centronorte), centers = 4, nstart = 25)
+
+# Suma de cuadrados intra-clúster individual
+k.means$withinss
+
+# Suma de cuadrados intra-clúster total
+k.means$tot.withinss
+
+# Asignación de clústeres de cada observación
+clusteres.km <- k.means$cluster
+```
+
+```{r}
+fviz_cluster(object = k.means, data = na.omit(datos.centronorte), show.clust.cent = TRUE, ellipse.type = "euclid", repel = TRUE) +
+  labs(title = "Resultados clustering K-means") +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+```{r}
+library(FactoMineR)
+# Cálculo componentes principals con la función PCA()
+pca.nci <- PCA(X = datos.centronorte, scale.unit = TRUE, ncp = 64, graph = FALSE)
+
+library(factoextra)
+fviz_pca_ind(pca.nci, geom.ind = "point", 
+             col.ind = as.factor(k.means$cluster), 
+             axes = c(1, 2), 
+             pointsize = 1.5)
+```
+
 # Preguntas y Problemas
 
 En base a la motivación y la exploración de los datos surgieron las siguientes preguntas:
@@ -1197,6 +1449,7 @@ En base a la motivación y la exploración de los datos surgieron las siguientes
 - Tener en consideración el factor de la gente que no paga, y que el añadir nuevos tramos ayudará a mejorar eso
 
 - Predecir cantidad de viajes de grupos poblacionales segun sexo, ingreso, estudios, residencia, entre otros.
+
 
 # Contribucion de cada integrante
 
