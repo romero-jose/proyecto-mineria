@@ -284,6 +284,8 @@ viajes_encuesta$FactorDomingoNormal <- NULL
 viajes_encuesta$FactorSabadoNormal <- NULL
 viajes_encuesta$FactorLaboralEstival <- NULL
 viajes_encuesta$ActividadDestino <- NULL
+viajes_encuesta$FactorLaboralNormal <- NULL
+viajes_encuesta$CódigoTiempo <- NULL
 ```
 
 **Datos igual a 0**:
@@ -1432,6 +1434,15 @@ En base a la motivación y la exploración de los datos surgieron las siguientes
 - Predecir cantidad de viajes de grupos poblacionales segun sexo, ingreso, estudios, residencia, entre otros.
 
 **Mejora de Preguntas y problemas**
+
+En la pregunta siguiente se busca visualizar de mejor manera los destinos de las personas a medida que transcurre el día.
+
+- ¿Donde se concentran los destinos de viaje según el lugar de origen y la hora?
+
+Por un tema de curiosidad, se formula la siguiente pregunta:
+
+- ¿Se puede predecir el propósito del viaje con los datos que tenemos?
+
 Se tiene que tomar en cuenta que se realizó una separacion en los datos entre las comunas de centronorte, occidente, oriente y sur, en base a las distribuciones de las fiscalias metropolitanas.
 
 - ¿Existen caracteristicas especificas o diferenciables entre los sectores de la ciudad al momento de definir una ruta o medio para el transporte?
