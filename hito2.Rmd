@@ -1441,7 +1441,7 @@ En la pregunta siguiente se busca visualizar de mejor manera los destinos de las
 
 Por un tema de curiosidad, se formula la siguiente pregunta:
 
-- ¿Se puede predecir el propósito del viaje con los datos que tenemos?
+- ¿Se puede predecir el propósito de los viajes con los datos que tenemos?
 
 Se tiene que tomar en cuenta que se realizó una separacion en los datos entre las comunas de centronorte, occidente, oriente y sur, en base a las distribuciones de las fiscalias metropolitanas.
 
