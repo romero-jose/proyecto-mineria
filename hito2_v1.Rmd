@@ -1141,17 +1141,11 @@ En base a la motivación y la exploración de los datos surgieron las siguientes
 
 - Predecir cantidad de viajes de grupos poblacionales segun sexo, ingreso, estudios, residencia, entre otros.
 
-
-
-
 **Mejora de Preguntas y problemas**
+
 Se tiene que tomar en cuenta que se realizó una separacion en los datos entre las comunas de centronorte, occidente, oriente y sur, en base a las distribuciones de las fiscalias metropolitanas.
 
-- ¿Dónde se concentran los destinos de viaje según el lugar de origen y la hora?
-
-- ¿Es posible predecir el propósito del viaje con los datos que se disponen?
-
-- ¿Existen caracteristicas especificas entre los sectores de la ciudad que hagan optar a la gente por  una  determinada ruta o medio de transporte?
+- ¿Existen caracteristicas especificas o diferenciables entre los sectores de la ciudad al momento de definir una ruta o medio para el transporte?
 
 - ¿Es posible encontrar grupos de personas en estos mismos sectores?, ¿Seran homogeneos u heterogeneos?, ¿Y si se comparan los grupos entre sectores?
 
@@ -1161,7 +1155,21 @@ Se tiene que tomar en cuenta que se realizó una separacion en los datos entre l
 
 - ¿Es correcta la separacion de las comunas para dar respuesta a las preguntas anteriores?, ¿Se podria hacer alguna mejora?
 
-# Propuesta Experimental
+En una vision a nivel regional, se realizan las siguientes preguntas respecto al dataset de viajes_encuesta (Encuesta de Origen y Destino de Viajes Santiago 2012):
+
+- ¿Donde se concentran los destinos de viaje según el lugar de origen y la hora?
+
+En tanto, se formuló una pregunta que tiene relación con los hábitos de las personas que respondieron la encuesta anterior.
+
+- ¿Se puede predecir el propósito del viaje con los otros datos de la encuesta?
+
+En esta pregunta se busca saber si es posible predecir el proposito de viaje de las distintas personas basado diversos parámetros como por ejemplo, la hora en la que se viaja, el origen al destino del cual se viaja, entre otros. 
+
+- De lo anterior, ¿cuáles son las características del dataset con mayor importancia a la hora de hacer una clasificación del propósito de viaje?
+
+# Propuestas Experimentales
+
+Para las preguntas asociadas a separar los datos por zona, se realizan las siguientes propuestas para la etapa experimental:
 
 - A los dataframe que ya fueron separados por zonas o sectores, segun las comunas, se le agregaran una columna a modo de etiqueta que señale esta misma zona. Este procedimiento es importante para la pregunta de prediccion que se propuso.
 
@@ -1183,11 +1191,45 @@ De la misma forma, ya se han reemplazado valores numericos a texto, como por eje
 
 - También probaremos usando distintos subconjuntos de atributos al hacer clustering para evaluar si los ejemplos se agrupan de manera distinta cuando consideramos información diferente. Y luego comprar los resultados obtenidos para cada zona.
 
-- Para evaluar los clusters, utilizaremos el enfoque visual así como también la estimación de métricas tales como cohesión y separación.
+- Para evaluar los clusters, utilizaremos el enfoque visual así como también la
+estimación de métricas tales como cohesión y separación.
 
+Por otra parte, para visualizar los destinos del viaje se realizan las siguientes pasos a seguir para la propuesta experimental:
 
+Para el estudio de donde se concentran los viajes según la hora se propone aplicar el algoritmo de clustering DBSCAN a los datos de destino de viaje de la EOD 2012. Concretamente, separar los datos por la hora de inicio del viaje y para cada hora seleccionar los datos de coordenadas de destino y a estos datos aplicarle el algoritmo. Se determinarán los parámetros eps y MinPoints seleccionando tres horas y evaluando los clusters obtenidos usando k-means y evaluación visual. Luego, usando estos parámetros se puede correr el algoritmo para el resto de las horas y graficar los resultados en un mapa para poder visualizar y comparar donde se concentrar los destinos de los viajes según la hora. Para este último paso será necesario aplicarles una transformación a los datos de coordenadas, ya que estos corresponden a las coordenadas en la proyección UTM, que es apropiada para utilizar la distancia euclideana, pero no sirva para mostrar los datos en un mapa.
 
+Para el caso análogo de donde se concentran los viajes según el origen se propone utilizar un método similar al descrito anteriormente, pero separando los datos por comuna de origen. 
 
+Se decidió utilizar el algoritmo DBSCAN porque a diferencia de los otros algoritmos de clustering estudiados en el curso no requiere asignar todos los puntos a algún cluster y por la naturaleza de los datos no todos pertenecen a algún cluster. Además, este algoritmo es resiliente ante el ruido y como se utilizará sobre dos dimensiones no va a presentar los problemas que puede tener este algoritmo con datos de alta dimensionalidad.
+
+Respondiendo las ultimas preguntas, de prediccion de propósito de viajes, se realizan los siguientes pasos para la propuesta experimental:
+
+- De partida, se trabajará con el dataset viajes_encuesta, este dataset contiene las siguientes columnas:
+
+```{r}
+colnames(viajes_encuesta)
+```
+- Se eliminan las columnas Hogar, Persona y Viaje debido a que poseen códigos distintos en cada caso, y solo aportan información del individuo, no del contexto general.
+
+- Existen columnas que deben ser divididas por sector, o se debe crear una forma en cómo representar datos como las comunas de origen y destino, como los distintos paraderos. Se puede utiizar con una codificación one-hot, sin embargo, eso puede suponer un incremento en la dimensionalidad del dataset en más de 1000 features muy sparse. Lo anterior supondría la búsqueda de algun método alternativo para hacer un encoding de los datos. Una de las opciones es crear un feature embedding que relacione distintos lugares y cree un vector de menor dimensionalidad, tal como ocurre con los word embeddings.
+
+- Debido a que el dataset posee 14 clases distintas, de cada uno de los propósitos distintos, y éstas están altamente desbalanceados, se pueden juntar algunas clases que son similares, por ejemplo, 'Al trabajo' con 'Por trabajo' y 'recreación' con 'comer y tomar algo', para disminuir tanto el numero como el desbalance de clases.
+
+- Luego se manejan los NaN de diversas maneras. Si una columna tiene un numero exagerado de NaNs, directamente se elimina, y si no, se pueden realizar diversas técnicas de regularización, como reemplazar por -1. 
+
+- Se dividen los datos en entrenamiento, validación y testing en una proporción 60, 20 y 20.
+
+- Para hacer un manejo de NaNs en situaciones particulares, es necesario primero normalizar algunas features a una distribuición uniforme, y luego aplicar alguna tecnica de regularizacion de NaNs especifica. Notese que esta normalización se realiza teniendo en cuenta los datos de entrenamiento, y se aplican las mismas transformaciones a los sets de validación y testing. 
+
+- Una vez limpios los datos, se propone utilizar como clasificador un random forest, o utilizar un multilayer perceptron en conjunto con feature embeddings.
+
+- Por un lado, se elige entrenar un random forest porque es un clasificador simple, rapido de entrenar, y que puede responder la siguiente pregunta, ¿cuáles son las características del dataset con mayor importancia a la hora de hacer una clasificación del propósito de viaje?
+
+- Por el otro, sería interesante comparar distintas métricas a la hora de clasificar con un modelo MLP. Eso si, la pregunta asociada a la importancia de las features probablemente no pueda ser contestada con este modelo.
+
+- Se entrenan los modelos con los sets de entrenamiento, y se van validando los resultados para cada epoch en el caso del clasificador MLP con el set de validación. Y se extraen los resultados con el set de testing para ambos casos.
+
+- Con los resultados anteriores se concluye respondiendo ambas preguntas.
 
 # Contribucion de cada integrante
 
