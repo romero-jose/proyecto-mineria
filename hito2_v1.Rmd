@@ -1122,7 +1122,6 @@ personas_oriente <- filter(personas_encuesta, Hogar %in% hogares_oriente$Hogar)
 
 # Seleccion de Caracteristicas
 
-REVISAR!!!!!!
 
 ```{r}
 cor(matriz_2019.08[,4:10])
@@ -1139,31 +1138,31 @@ En base a la motivación y la exploración de los datos surgieron las siguientes
 
 - Tener en consideración el factor de la gente que no paga, y que el añadir nuevos tramos ayudará a mejorar eso
 
-- Predecir cantidad de viajes de grupos poblacionales segun sexo, ingreso, estudios, residencia, entre otros.
+- Predecir cantidad de viajes de grupos poblacionales según sexo, ingreso, estudios, residencia, entre otros.
 
 **Mejora de Preguntas y problemas**
 
-Se tiene que tomar en cuenta que se realizó una separacion en los datos entre las comunas de centronorte, occidente, oriente y sur, en base a las distribuciones de las fiscalias metropolitanas.
+Se tiene que tomar en cuenta que se realizó una separación en los datos entre las comunas de centronorte, occidente, oriente y sur, en base a las distribuciones de las fiscalías metropolitanas.
 
-- ¿Existen caracteristicas especificas o diferenciables entre los sectores de la ciudad al momento de definir una ruta o medio para el transporte?
+- ¿Existen características específicas o diferenciables entre los sectores de la ciudad al momento de definir una ruta o medio para el transporte?
 
-- ¿Es posible encontrar grupos de personas en estos mismos sectores?, ¿Seran homogeneos u heterogeneos?, ¿Y si se comparan los grupos entre sectores?
+- ¿Es posible encontrar grupos de personas en estos mismos sectores?, ¿Serán homogeneos u heterogeneos?, ¿Y si se comparan los grupos entre sectores?
 
-- ¿Se podrá predecir el sector o comuna de residencia de una persona con informacion de sus viajes, minimizando la informacion personal?
+- ¿Se podrá predecir el sector o comuna de residencia de una persona con información de sus viajes, minimizando la información personal?
 
-- ¿Cual seria la informacion necesaria para la prediccion anterior?
+- ¿Cuál sería la información necesaria para la predicción anterior?
 
-- ¿Es correcta la separacion de las comunas para dar respuesta a las preguntas anteriores?, ¿Se podria hacer alguna mejora?
+- ¿Es correcta la separación de las comunas para dar respuesta a las preguntas anteriores?, ¿Se podría hacer alguna mejora?
 
-En una vision a nivel regional, se realizan las siguientes preguntas respecto al dataset de viajes_encuesta (Encuesta de Origen y Destino de Viajes Santiago 2012):
+En una visión a nivel regional, se realizan las siguientes preguntas respecto al dataset de viajes_encuesta (Encuesta de Origen y Destino de Viajes Santiago 2012):
 
-- ¿Donde se concentran los destinos de viaje según el lugar de origen y la hora?
+- ¿Dónde se concentran los destinos de viaje según el lugar de origen y la hora?
 
 En tanto, se formuló una pregunta que tiene relación con los hábitos de las personas que respondieron la encuesta anterior.
 
 - ¿Se puede predecir el propósito del viaje con los otros datos de la encuesta?
 
-En esta pregunta se busca saber si es posible predecir el proposito de viaje de las distintas personas basado diversos parámetros como por ejemplo, la hora en la que se viaja, el origen al destino del cual se viaja, entre otros. 
+En esta pregunta se busca saber si es posible predecir el propósito de viaje de las distintas personas basado diversos parámetros como por ejemplo, la hora en la que se viaja, el origen al destino del cual se viaja, entre otros. 
 
 - De lo anterior, ¿cuáles son las características del dataset con mayor importancia a la hora de hacer una clasificación del propósito de viaje?
 
@@ -1171,23 +1170,23 @@ En esta pregunta se busca saber si es posible predecir el proposito de viaje de 
 
 Para las preguntas asociadas a separar los datos por zona, se realizan las siguientes propuestas para la etapa experimental:
 
-- A los dataframe que ya fueron separados por zonas o sectores, segun las comunas, se le agregaran una columna a modo de etiqueta que señale esta misma zona. Este procedimiento es importante para la pregunta de prediccion que se propuso.
+- A los dataframe que ya fueron separados por zonas o sectores, según las comunas, se le agregaran una columna a modo de etiqueta que señale esta misma zona. Este procedimiento es importante para la pregunta de predicción que se propuso.
 
-- Pre-procesar los datos, ya que si bien se han eliminado columnas o filas segun la cantidad de datos NA o iguales a cero, aun seguimos teniendo informacion con estas caracteristicas, por lo que se debe decidir si se seguiran eliminandom, o reemplazar los valores a un promedio o algo similar, segun corresponda.
+- Pre-procesar los datos, ya que si bien se han eliminado columnas o filas segun la cantidad de datos NA o iguales a cero, aun seguimos teniendo información con estas características, por lo que se debe decidir si se seguirán eliminando, o reemplazar los valores a un promedio o algo similar, según corresponda.
 
-De la misma forma, ya se han reemplazado valores numericos a texto, como por ejemplo motivos de viajes o comunas, se debe evaluar deshacer esto para utilizarlos como atributos en las tecnicas de prediccion y/o clustering.
+De la misma forma, ya se han reemplazado valores numéricos a texto, como por ejemplo motivos de viajes o comunas, se debe evaluar deshacer esto para utilizarlos como atributos en las técnicas de predicción y/o clustering.
 
-- Crear un gran dataset, para particionarlo y generar el conjunto de entrenamiento, prueba y validacion, debido a la gran cantidad de observaciones que manejamos, una posibilidad es tomar muestras de cada zona para generar este dataset. Tambien con esto ultimo se puede balancear los datos con respecto a las clases.
+- Crear un gran dataset, para particionarlo y generar el conjunto de entrenamiento, prueba y validación, debido a la gran cantidad de observaciones que manejamos, una posibilidad es tomar muestras de cada zona para generar este dataset. También con esto ultimo se puede balancear los datos con respecto a las clases.
 
-- Con este gran dataset se realizara una reduccion de atributos o caracteristicas, esto se llevara a cabo de dos formas, una forma simple utilizando la varianza y la correlacion entre columnas, para no perder explicabilidad, y utilizando PCA, para hacer visualizaciones en a lo mas 3D como apoyo al analisis. Esto con el fin de comparar los resultados y seleccionar el mejor.
+- Con este gran dataset se realizará una reducción de atributos o características, esto se llevara a cabo de dos formas, una forma simple utilizando la varianza y la correlación entre columnas, para no perder explicabilidad, y utilizando PCA, para hacer visualizaciones en a lo mas 3D como apoyo al análisis. Esto con el fin de comparar los resultados y seleccionar el mejor.
 
-- Para responder la pregunta de prediccion o clasificacion, utilizaremos modelos de KNN y SVM, para luego realizar una comparacion entre los modelos. También probaremos usando distintos subconjuntos de atributos, para trabajar la pregunta con relacion a la informacion necesaria para clasificar.
+- Para responder la pregunta de predicción o clasificación, utilizaremos modelos de KNN y SVM, para luego realizar una comparación entre los modelos. También probaremos usando distintos subconjuntos de atributos, para trabajar la pregunta con relación a la información necesaria para clasificar.
 
 - Para evaluar la calidad de la clasificación, utilizaremos las métricas tradicionales como F1, precision y recall, aplicando un particionado de 60-20-20 para entrenamiento, testeo y prueba respectivamente. Nuestra idea de esto es no sobre-ajustar el modelo y este aprenda de subsets de entrenamiento distintos.
 
 - También aplicaremos técnicas de clustering para encontrar de manera natural si las características de nuestro dataset son suficientes para encontrar grupos dentro de esta 4 zonas definidas.
 
-- Probaremos múltiples combinaciones en el número de clúster pero solo utilizando enfoques particionales, ya que contamos con muchos datos para hacer algo jerarquico, y seguir manteniendo la capacidad un analisis cualitativo en ese caso.
+- Probaremos múltiples combinaciones en el número de clúster pero solo utilizando enfoques particionales, ya que contamos con muchos datos para hacer algo jerárquico, y seguir manteniendo la capacidad un análisis cualitativo en ese caso.
 
 - También probaremos usando distintos subconjuntos de atributos al hacer clustering para evaluar si los ejemplos se agrupan de manera distinta cuando consideramos información diferente. Y luego comprar los resultados obtenidos para cada zona.
 
@@ -1202,7 +1201,7 @@ Para el caso análogo de donde se concentran los viajes según el origen se prop
 
 Se decidió utilizar el algoritmo DBSCAN porque a diferencia de los otros algoritmos de clustering estudiados en el curso no requiere asignar todos los puntos a algún cluster y por la naturaleza de los datos no todos pertenecen a algún cluster. Además, este algoritmo es resiliente ante el ruido y como se utilizará sobre dos dimensiones no va a presentar los problemas que puede tener este algoritmo con datos de alta dimensionalidad.
 
-Respondiendo las ultimas preguntas, de prediccion de propósito de viajes, se realizan los siguientes pasos para la propuesta experimental:
+Respondiendo las ultimas preguntas, de predicción de propósito de viajes, se realizan los siguientes pasos para la propuesta experimental:
 
 - De partida, se trabajará con el dataset viajes_encuesta, este dataset contiene las siguientes columnas:
 
@@ -1219,7 +1218,7 @@ colnames(viajes_encuesta)
 
 - Se dividen los datos en entrenamiento, validación y testing en una proporción 60, 20 y 20.
 
-- Para hacer un manejo de NaNs en situaciones particulares, es necesario primero normalizar algunas features a una distribuición uniforme, y luego aplicar alguna tecnica de regularizacion de NaNs especifica. Notese que esta normalización se realiza teniendo en cuenta los datos de entrenamiento, y se aplican las mismas transformaciones a los sets de validación y testing. 
+- Para hacer un manejo de NaNs en situaciones particulares, es necesario primero normalizar algunas features a una distribuición uniforme, y luego aplicar alguna técnica de regularización de NaNs especifica. Nótese que esta normalización se realiza teniendo en cuenta los datos de entrenamiento, y se aplican las mismas transformaciones a los sets de validación y testing. 
 
 - Una vez limpios los datos, se propone utilizar como clasificador un random forest, o utilizar un multilayer perceptron en conjunto con feature embeddings.
 
