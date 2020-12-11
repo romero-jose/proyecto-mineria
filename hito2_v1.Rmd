@@ -1119,15 +1119,6 @@ personas_occidente <- filter(personas_encuesta, Hogar %in% hogares_occidente$Hog
 personas_oriente <- filter(personas_encuesta, Hogar %in% hogares_oriente$Hogar)
 ```
 
-
-# Seleccion de Caracteristicas
-
-
-```{r}
-cor(matriz_2019.08[,4:10])
-```
-
-
 # Preguntas y Problemas
 
 En base a la motivación y la exploración de los datos surgieron las siguientes preguntas:
@@ -1232,12 +1223,12 @@ colnames(viajes_encuesta)
 
 # Contribucion de cada integrante
 
-- **Joaquin Cubelli de Leon**: Editar codigo para arreglar gráficos, redacción de la motivación y confección de presentación audio-visual.
+- **Joaquin Cubelli de Leon**: Limpieza menor a dataset de viajes_encuesta, postulacion de preguntas asociadas a predicción de propósito de viajes, importancia de características y la metodología asociada a resolución de éstas.
 
-- **Luckas Diaz Renjifo**: Liempieza de datos, realizar graficos, organizar documento .Rmd y confección de presentación audio-visual.
+- **Luckas Diaz Renjifo**: Limpieza de los dataset correspondientes a las matrices de viajes de los años 2011 a 2018, propuestas para las mejoras en las preguntas y problemas a resolver, de la misma forma en propuestas para las propuestas experimentales. Tambien separar los datos con respecto a los sectores de las comunas.
 
-- **Ricardo Lopez Diaz**: Editar codigo para arreglar gráficos, formulación de preguntas/problemas y confección de presentación audio-visual.
+- **Ricardo Lopez Diaz**: Participación en la discusión de las propuestas de problemas y preguntas, revisión ortográfica.
 
-- **José Luis Romero**: Sampleo de los datos fuera de Rstudio, mejorar la carga de datos con los tipos correctos, solucionar errores de propagacion de los nulls, realizar graficos y confección de presentación audio-visual.
+- **José Luis Romero**: Postulación de pregunta respecto a visualizacion por clusters de viajes, y su metodología asociada.
 
-- **Andres Urrutia Aliaga**: Editar codigo para arreglar gráficos, formulación de preguntas/problemas.
+- **Andres Urrutia Aliaga**: Eliminación de dataset descartados, participación en la discusión de las propuestas de problemas y preguntas
