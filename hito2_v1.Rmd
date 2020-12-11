@@ -15,7 +15,7 @@ output: html_document
 ```
 
 
-# Hito1 Grupo 9 - Proyecto: **A donde van**
+# Hito2 Grupo 9 - Proyecto: **A donde van**
 
 Integrantes: Joaquin Cubelli de Leon, Luckas Diaz Renjifo, Ricardo Lopez Diaz, José Luis Romero y Andres Urrutia Aliaga.
 
