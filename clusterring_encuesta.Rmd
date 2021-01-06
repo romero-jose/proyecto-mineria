@@ -1,0 +1,178 @@
+# ¿Dónde se concentran los destinos de viaje según el lugar de origen y la hora?
+
+## Carga de datos
+
+
+### Librerias
+
+```{r}
+#install.packages("tidyverse")
+#install.packages("dbscan")
+#install.packages("rgdal")
+#install.packages("sp")
+#install.packages("ggmap")
+```
+
+```{r}
+library(tidyverse) # Incluye readr, dpylr, tidyr, ggplot2, datar...
+library(dbscan)
+library(sp)
+library(rgdal)
+library(ggmap)
+library(lubridate, warn.conflicts = FALSE)
+```
+
+### Encuesta
+```{r}
+loc <- locale("es", decimal_mark = ',', encoding = 'latin1')
+viajes_encuesta <- read_csv2('datos/viajes.csv', locale = loc)
+hogares_encuesta <- read_csv2('datos/Hogares.csv', locale = loc)
+personas_encuesta <- read_csv2('datos/personas.csv', locale = loc)
+comunas_encuesta <- read_csv2('datos/Comuna.csv', locale = loc)
+propositos_encuesta <- read_csv2('datos/Proposito.csv', locale = loc)
+tipodia_encuesta <- read_csv2('datos/TipoDia.csv', locale = loc)
+sexo_encuesta <- read_csv2('datos/Sexo.csv', locale = loc)
+adultomayor_encuesta <- read_csv2('datos/AdultoMayor.csv', locale = loc)
+estudios_encuesta <- read_csv2('datos/Estudios.csv', locale = loc)
+```
+Seleccionar atributos relevantes, ignorar filas con valores nulos o cero y tomar un sample.
+```{r}
+coord_origenes <- viajes_encuesta %>%
+  select(OrigenCoordX, OrigenCoordY, HoraIni) %>%
+  drop_na() %>%
+  filter(OrigenCoordX!=0.0, OrigenCoordY!=0.0)
+```
+
+Correr el algoritmo de clustering
+```{r}
+run_clustering <- function(data, eps, minPts) {
+  dbscan::dbscan(data, eps, minPts)
+}
+```
+
+Filtrar los datos que no estan en ningun cluster
+```{r}
+filter_clusters <- function(clusters) {
+  
+}
+```
+
+Transformar de proyección UTM a latitud-longitud para poder dibujarlo en un mapa.
+```{r}
+transform_coords <- function(coords) {
+  coords %>%
+  SpatialPoints(CRS('+proj=utm +zone=19 +south')) %>%
+  spTransform(CRS('+proj=longlat')) %>%
+  as.tibble() %>%
+  select(lat=x, lng=y)
+}
+```
+
+Graficar en un mapa
+```{r}
+plot_clusters <- function(longlat, clusters) {
+  santiago_bbox <- c(left=-70.85015, top=-33.27945, right=-70.46082, bottom=-33.64864)
+  santiago_map <- get_stamenmap(santiago_bbox, crop=TRUE, zoom=12)
+  p <- ggmap(santiago_map) +
+        geom_point(data = longlat[clusters$cluster != 0,], aes(x=lat, y=lng, color=factor(clusters$cluster[clusters$cluster != 0])), show.legend = FALSE)
+  p
+}
+```
+
+Resultado de aplicar lo anterior a un sample todos los datos
+```{r}
+
+run_visualization <- function(data, clusters)  {
+  latlongs <- transform_coords(data)
+  plot_clusters(latlongs, clusters)
+}
+
+data <-
+  coord_origenes %>%
+  sample_n(10000) %>%
+  select(x=OrigenCoordX, y=OrigenCoordY)
+
+clusters <- run_clustering(data, 400, 50)
+
+
+p <- run_visualization(data, clusters)
+p
+```
+
+Determinar los parámetros *eps* y *minPts* repitiendo lo anterior para tres horas distintas, con distintos valores para estos parámetros.
+
+Separar los datos por hora de inicio del viaje
+```{r}
+coord_origenes_grouped <-
+    coord_origenes %>%
+      group_by(hour=hour(hms(HoraIni)))
+```
+
+Seleccionar tres horas para elegir los parámetros
+```{r}
+HoraIniSample <- hour(hms(parse_time(c("7:00", "15:00", "18:00"))))
+
+coord_origenes_filtered <-
+  coord_origenes_grouped %>%
+  filter(hour %in% HoraIniSample)
+
+coord_origenes_filtered
+```
+```{r}
+library(ggplot2)
+
+data <- 
+ coord_origenes_filtered %>%
+ select(x=OrigenCoordX, y=OrigenCoordY, hour=hour)
+
+for (eps in c(150, 300, 450)) {
+  
+  clusters <-
+    do(data, model = run_clustering(., eps, 25), data = ., hour=.$hour)
+  
+  transformed_clusters <-
+    do(clusters, model = .$model, data = transform_coords(.$data), hour=.$hour)
+  
+  santiago_bbox <- c(left=-70.85015, top=-33.27945, right=-70.46082, bottom=-33.64864)
+  santiago_map <- get_stamenmap(santiago_bbox, crop=TRUE, zoom=12)
+  
+  for (i in c(1, 2, 3)) {
+    longlat <- transformed_clusters$data[[i]]
+    clusters <- transformed_clusters$model[[i]]
+    hour <- transformed_clusters$hour[[i]]
+    p <- ggmap(santiago_map) +
+        geom_point(data = longlat[clusters$cluster != 0,], aes(x=lat, y=lng, color=factor(clusters$cluster[clusters$cluster != 0])), show.legend = FALSE) +
+      ggtitle(paste("Hora = ", hour, ", eps = ", eps))
+    print(p)
+  }
+}
+```
+
+A partir de los gráficos anteriores se decidió utilzar *eps = 450*, ya que con este valor el número de clusters es suficientemente pequeño para interpretarlos y se asignan a clusters un mayor número de puntos que con los otros valores de eps. También se repitió este proceso para distitos valores de *MinPts*, lo que no se muestra por brevedada, de lo que se obtuvo el valor *minPts = 25*.
+
+
+Ejecutar el algoritmo de clustering para todas las horas
+```{r}
+data <- 
+ coord_origenes_grouped %>%
+ select(x=OrigenCoordX, y=OrigenCoordY, hour=hour)
+
+clusters <-
+  do(data, model = run_clustering(., eps, 25), data = ., hour=.$hour)
+
+transformed_clusters <-
+  do(clusters, model = .$model, data = transform_coords(.$data), hour=.$hour)
+
+santiago_bbox <- c(left=-70.85015, top=-33.27945, right=-70.46082, bottom=-33.64864)
+santiago_map <- get_stamenmap(santiago_bbox, crop=TRUE, zoom=12)
+
+for (i in c(1 : 24)) {
+  longlat <- transformed_clusters$data[[i]]
+  clusters <- transformed_clusters$model[[i]]
+  hour <- transformed_clusters$hour[[i]]
+  p <- ggmap(santiago_map) +
+        geom_point(data = longlat[clusters$cluster != 0,], aes(x=lat, y=lng, color=factor(clusters$cluster[clusters$cluster != 0])), show.legend = FALSE) +
+        ggtitle(paste("Hora = ", hour))
+  print(p)
+}
+```
